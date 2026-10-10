@@ -1,0 +1,63 @@
+/* Parking Map Header & Legend */
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.map-stats {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.stat-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.stat-indicator.free { 
+  background-color: var(--accent-green); 
+}
+
+.stat-indicator.occupied { 
+  background-color: var(--accent-red); 
+}
+
+.stat-indicator.path { 
+  background-color: var(--accent-yellow); 
+}
+
+/* Canvas Container */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #090d16;
+  border-radius: 10px;
+  padding: 0.75rem;
+  overflow: auto;
+}
+
+/* 2D Parking Map Canvas */
+#parkingMap {
+  display: block;
+  background-color: #0d131f;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  max-width: 100%;
+  height: auto;
+}

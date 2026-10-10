@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Smart Parking System with Real-Time Gate OCR, Dynamic Slot Allocation and A* Route Navigation">
+  <title>SmartPark AI - Gate OCR & 2D Map Routing</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">P</div>
+      <div>
+        <h1 class="brand-title">SmartPark AI</h1>
+      </div>
+      <span class="brand-badge">Hackathon 2026</span>
+    </div>
+    <div class="system-status">
+      <span class="status-dot"></span>
+      <span>Gate Vision & A* Engine Online</span>
+    </div>
+  </header>
+
+  <!-- Main 2-Column Responsive Layout -->
+  <main class="main-container">
+    
+    <!-- Left Column: Gate Camera & OCR Results -->
+    <section class="panel" aria-labelledby="gate-camera-title">
+      <div class="panel-title">
+        <span id="gate-camera-title">📹 Gate Camera & OCR Scanner</span>
+        <span class="badge badge-guest" id="ocrStatusBadge">Awaiting Car</span>
+      </div>
+
+      <!-- Simulated Camera Viewport -->
+      <div class="camera-feed" id="cameraFeed">
+        <div class="camera-grid"></div>
+        <div class="camera-scanline"></div>
+        <div class="camera-corner top-left"></div>
+        <div class="camera-corner top-right"></div>
+        <div class="camera-corner bottom-left"></div>
+        <div class="camera-corner bottom-right"></div>
+        
+        <div class="camera-license-preview">
+          <div style="font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase;">License Plate Detected</div>
+          <div class="plate-display" id="ocrPlateDisplay">-- ---.--</div>
+        </div>
+      </div>
+
+      <!-- OCR Recognized Details -->
+      <div class="ocr-details">
+        <div class="detail-row">
+          <span class="detail-label">Vehicle Type</span>
+          <span class="detail-value" id="ocrVehicleType">Sedan (4-Seats)</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Assigned Destination</span>
+          <span class="detail-value" id="ocrBuildingDisplay">None</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">A* Navigation Route</span>
+          <span class="detail-value" id="routeInfoDisplay">Waiting for gate entry</span>
+        </div>
+      </div>
+
+      <!-- Simulation Action Controls -->
+      <div class="btn-group">
+        <button id="simulateEntryBtn" class="btn btn-primary">
+          🚗 Trigger Gate OCR Scan
+        </button>
+        <button id="clearRouteBtn" class="btn btn-secondary">
+          🔄 Reset Route Path
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Column: Parking Lot Map & Visualizer -->
+    <section class="panel" aria-labelledby="parking-map-title">
+      <div class="panel-title">
+        <span id="parking-map-title">🗺️ Parking Lot 2D Navigation Map</span>
+        <div class="map-stats">
+          <div class="stat-item">
+            <span class="stat-indicator free"></span>
+            <span>Free Slot</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-indicator occupied"></span>
+            <span>Occupied</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-indicator path"></span>
+            <span>A* Path</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Wrapper -->
+      <div class="canvas-wrapper">
+        <canvas id="parkingMap" width="800" height="600" aria-label="Interactive 2D Parking Map"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Guest Destination Modal / Popup -->
+  <div id="guestModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <h2 id="modalTitle" class="modal-title">
+        <span>📍</span> Are you a guest? Select your destination:
+      </h2>
+      <p class="modal-desc">
+        Welcome to the smart facility. Please select your visit destination to calculate the nearest available parking bay using our real-time A* routing algorithm.
+      </p>
+
+      <div class="form-group">
+        <label for="destinationSelect" class="form-label">Destination Building</label>
+        <select id="destinationSelect" class="select-control">
+          <option value="Building A">Building A</option>
+          <option value="Building B">Building B</option>
+          <option value="Building C">Building C</option>
+          <option value="Building D">Building D</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="cancelModalBtn" class="btn btn-secondary">Close</button>
+        <button type="button" id="findParkingBtn" class="btn btn-primary">Find Parking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: canvas.js strictly handles rendering, main.js coordinates API & events -->
+  <script src="js/canvas.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
