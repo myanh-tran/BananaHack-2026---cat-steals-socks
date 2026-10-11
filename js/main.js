@@ -62,6 +62,8 @@ const MOCK_SCENARIOS = {
 
 // DOM References
 const modeToggle = document.getElementById('modeToggle');
+const apiUrlInput = document.getElementById('apiUrlInput');
+let API_BASE_URL = (localStorage.getItem('smartpark_api_url') || 'http://localhost:8000').replace(/\/$/, '');
 const serverStatusDot = document.getElementById('serverStatusDot');
 const serverStatusText = document.getElementById('serverStatusText');
 const scenarioSelect = document.getElementById('scenarioSelect');
@@ -307,7 +309,7 @@ async function triggerGateScan(uploadedImageFile = null) {
         const formData = new FormData();
         formData.append('file', uploadedImageFile); // Backend expects field: 'file'
 
-        const res = await fetch('http://localhost:8000/api/gate/scan', {
+        const res = await fetch(`${API_BASE_URL}/api/gate/scan`, {
           method: 'POST',
           body: formData
         });
@@ -326,7 +328,7 @@ async function triggerGateScan(uploadedImageFile = null) {
           return;
         }
 
-        const res = await fetch('http://localhost:8000/api/gate/scan/plate', {
+        const res = await fetch(`${API_BASE_URL}/api/gate/scan/plate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ plate: manualPlate })
@@ -551,20 +553,20 @@ function startPolling() {
 
     try {
       // 1. Health check — GET /api/health
-      const healthRes = await fetch('http://localhost:8000/api/health');
+      const healthRes = await fetch(`${API_BASE_URL}/api/health`);
       if (healthRes.ok) {
         const healthData = await healthRes.json();
         const modelReady = healthData.pipeline_ready;
         if (serverStatusDot) serverStatusDot.style.backgroundColor = modelReady ? '#22c55e' : '#f59e0b';
         if (serverStatusText) {
           serverStatusText.textContent = modelReady
-            ? 'Server 8000: ONLINE — AI Models Ready ✓'
-            : 'Server 8000: ONLINE — Models loading… (degraded)';
+            ? `Online: ${API_BASE_URL} (AI Ready ✓)`
+            : `Online: ${API_BASE_URL} (Loading models…)`;
         }
       }
 
       // 2. Slots fetch
-      const slotsRes = await fetch('http://localhost:8000/api/slots');
+      const slotsRes = await fetch(`${API_BASE_URL}/api/slots`);
       if (slotsRes.ok) {
         const slotsData = await slotsRes.json();
         if (window.parkingCanvas && slotsData.slots) {
@@ -574,7 +576,7 @@ function startPolling() {
       }
     } catch (err) {
       if (serverStatusDot) serverStatusDot.style.backgroundColor = '#ef4444';
-      if (serverStatusText) serverStatusText.textContent = 'Server 8000: OFFLINE (Check python server)';
+      if (serverStatusText) serverStatusText.textContent = `Server Offline: ${API_BASE_URL}`;
     }
   }, 3000);
 }
@@ -598,12 +600,27 @@ window.onSlotOccupied = (slotId) => {
 
 // 9. EVENT LISTENERS INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore saved API URL if any
+  if (apiUrlInput) {
+    apiUrlInput.value = API_BASE_URL;
+    apiUrlInput.addEventListener('change', (e) => {
+      let val = e.target.value.trim().replace(/\/$/, '');
+      if (!val) val = 'http://localhost:8000';
+      API_BASE_URL = val;
+      localStorage.setItem('smartpark_api_url', val);
+      if (!USE_MOCK) startPolling();
+    });
+  }
+
   // Mode Switcher (Mock vs Live)
   if (modeToggle) {
     modeToggle.addEventListener('change', (e) => {
       USE_MOCK = e.target.value === 'mock';
+      if (apiUrlInput) {
+        apiUrlInput.style.display = USE_MOCK ? 'none' : 'inline-block';
+      }
       if (serverStatusText) {
-        serverStatusText.textContent = USE_MOCK ? 'Mock Mode (Simulation API)' : 'Connecting http://localhost:8000...';
+        serverStatusText.textContent = USE_MOCK ? 'Mock Mode (Simulation API)' : `Connecting ${API_BASE_URL}...`;
       }
       if (!USE_MOCK) {
         startPolling();
