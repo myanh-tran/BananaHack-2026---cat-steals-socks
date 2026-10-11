@@ -258,7 +258,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
     return {
       status: 'FULL',
       slot: null,
-      message: 'Toàn bộ bãi đỗ xe đã kín 100% (0/30 chỗ trống).'
+      message: 'Campus parking is 100% full (0/30 vacant bays). Entry barrier locked.'
     };
   }
 
@@ -293,7 +293,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: residentFreeSlots[0].distanceMeters,
         overflow: false,
-        message: `Đã cấp ô ${residentFreeSlots[0].slot.id} (Tòa ${building}) - cách thang máy ~${residentFreeSlots[0].distanceMeters}m.`
+        message: `Allocated Bay ${residentFreeSlots[0].slot.id} (Building ${building}) - approx. ${residentFreeSlots[0].distanceMeters}m to ${targetElevator.name}.`
       };
     }
 
@@ -311,7 +311,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: true,
-        message: `Tòa ${building} đã đầy! Đã điều phối sang ô ${best.slot.id} (cách thang máy Tòa ${building} ~${best.distanceMeters}m).`
+        message: `Building ${building} is 100% full! Re-routed to Bay ${best.slot.id} (~${best.distanceMeters}m walk to Elevator ${building}).`
       };
     }
   }
@@ -332,7 +332,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: false,
-        message: `Đã cấp ô khách ${best.slot.id} (Khu G) - cách thang máy ${targetElevator.name} ~${best.distanceMeters}m.`
+        message: `Allocated Guest Bay ${best.slot.id} (Zone G) - approx. ${best.distanceMeters}m to ${targetElevator.name}.`
       };
     }
 
@@ -350,12 +350,12 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: true,
-        message: `Khu khách G đã đầy! Đã điều phối sang ô ${best.slot.id} (Tòa ${best.slot.zone}) - cách thang máy ${targetElevator.name} ~${best.distanceMeters}m.`
+        message: `Guest Zone G is full! Re-routed to Bay ${best.slot.id} (Zone ${best.slot.zone}) - approx. ${best.distanceMeters}m to ${targetElevator.name}.`
       };
     }
   }
 
-  return { status: 'FULL', slot: null, message: 'Bãi đỗ xe đã kín chỗ.' };
+  return { status: 'FULL', slot: null, message: 'Campus parking is currently full.' };
 }
 
 /**

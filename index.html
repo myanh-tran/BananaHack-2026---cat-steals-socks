@@ -19,16 +19,23 @@
       <span class="brand-badge">Hackathon 2026</span>
     </div>
     
-    <!-- Backend Connection Indicator & Mode Switcher -->
-    <div style="display: flex; align-items: center; gap: 1.25rem;">
+    <!-- Top Stats & Backend Status -->
+    <div class="header-controls">
+      <!-- Capacity Badge -->
+      <div id="capacityBadge" class="capacity-pill">
+        <span>🅿️</span> Available: 20/30 Bays
+      </div>
+
+      <!-- Backend Connection Status Dot -->
       <div class="system-status">
         <span class="status-dot" id="serverStatusDot"></span>
-        <span id="serverStatusText">USE_MOCK: Active (Simulated API)</span>
+        <span id="serverStatusText">Mock Mode (Simulation API)</span>
       </div>
       
-      <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; background: rgba(255,255,255,0.06); padding: 0.35rem 0.75rem; border-radius: 9999px; border: 1px solid var(--border-color);">
-        <label for="modeToggle" style="cursor: pointer; color: var(--text-muted); font-size: 0.8rem;">Backend Mode:</label>
-        <select id="modeToggle" class="select-control" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; width: auto; background: transparent; border: none; color: #38bdf8; font-weight: 600;">
+      <!-- Backend Mode Toggle -->
+      <div class="mode-toggle-pill">
+        <label for="modeToggle" style="cursor: pointer; color: var(--text-muted); font-size: 0.8rem;">API Mode:</label>
+        <select id="modeToggle" class="select-control" style="padding: 0.15rem 0.4rem; font-size: 0.8rem; width: auto; background: transparent; border: none; color: #38bdf8; font-weight: 600;">
           <option value="mock" selected>Mock Data (Fast Demo)</option>
           <option value="live">Live Server (http://localhost:8000)</option>
         </select>
@@ -39,19 +46,22 @@
   <!-- Main 2-Column Responsive Layout -->
   <main class="main-container">
     
-    <!-- Left Column: Gate Camera & OCR Scanner & Scenario Controls -->
+    <!-- Left Column: Gate Terminal & OCR Scanner -->
     <section class="panel" aria-labelledby="gate-camera-title">
       <div class="panel-title">
-        <span id="gate-camera-title">📹 Gate Camera & OCR Scanner</span>
-        <span class="badge badge-guest" id="ocrStatusBadge">Awaiting Car</span>
+        <div class="panel-title-text" id="gate-camera-title">
+          <span>📹</span>
+          <span>Gate Camera & OCR Scanner</span>
+        </div>
+        <span class="badge badge-guest" id="ocrStatusBadge">Awaiting Vehicle</span>
       </div>
 
-      <!-- Live Alert Banner (When Lot is Full or OCR Error) -->
+      <!-- Alert Banner (Parking Full, OCR Error, Overflow) -->
       <div id="alertContainer" style="display: none;"></div>
 
-      <!-- Camera Viewport with Image Preview -->
+      <!-- Camera Feed Viewport with Vehicle Preview -->
       <div class="camera-feed" id="cameraFeed">
-        <img id="cameraPreviewImg" class="camera-preview-img" style="display: none;" alt="Scanned Vehicle Preview">
+        <img id="cameraPreviewImg" class="camera-preview-img" style="display: none;" alt="Vehicle Camera Capture">
         <div class="camera-grid"></div>
         <div class="camera-scanline"></div>
         <div class="camera-corner top-left"></div>
@@ -60,8 +70,8 @@
         <div class="camera-corner bottom-right"></div>
         
         <div class="camera-license-preview">
-          <div style="font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase;">License Plate Detected</div>
-          <div class="plate-display" id="ocrPlateDisplay">51A12345</div>
+          <div style="font-size: 0.72rem; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase;">Detected License Plate</div>
+          <div class="plate-display" id="ocrPlateDisplay">--</div>
         </div>
       </div>
 
@@ -69,59 +79,81 @@
       <div class="ocr-details">
         <div class="detail-row">
           <span class="detail-label">Vehicle Type / Owner</span>
-          <span class="detail-value" id="ocrVehicleType">Resident (Tòa A)</span>
+          <span class="detail-value" id="ocrVehicleType">--</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Assigned Bay (Ô đỗ)</span>
-          <span class="detail-value" id="ocrSlotDisplay">A-02 (RESERVED)</span>
+          <span class="detail-label">Assigned Parking Bay</span>
+          <span class="detail-value" id="ocrSlotDisplay">--</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">A* Navigation Route</span>
-          <span class="detail-value" id="routeInfoDisplay">Optimal path generated</span>
+          <span class="detail-value" id="routeInfoDisplay">Awaiting vehicle scan</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Nearest Elevator</span>
-          <span class="detail-value" id="elevatorInfoDisplay">Elevator A (~11m walk)</span>
+          <span class="detail-value" id="elevatorInfoDisplay">--</span>
         </div>
       </div>
 
-      <!-- Test Scenarios Selector (Mục 9 Kế hoạch) -->
+      <!-- Inline Guest Destination Selector (Appears seamlessly when a guest car arrives) -->
+      <div id="guestDestinationCard" class="guest-destination-card hidden">
+        <div class="guest-card-header">
+          <div class="guest-card-title">
+            <span>📍</span> Guest Vehicle Detected
+          </div>
+          <button type="button" id="cancelGuestBtn" class="btn-text" title="Dismiss guest selector">Dismiss</button>
+        </div>
+        <p class="guest-card-desc">
+          Driver is not a registered resident. Select destination building for nearest elevator routing:
+        </p>
+        <div class="guest-building-grid">
+          <button type="button" class="btn-building-choice" data-building="A">
+            <span class="bldg-icon">🏢</span>
+            <span>Building A</span>
+          </button>
+          <button type="button" class="btn-building-choice" data-building="B">
+            <span class="bldg-icon">🏢</span>
+            <span>Building B</span>
+          </button>
+          <button type="button" class="btn-building-choice" data-building="C">
+            <span class="bldg-icon">🏢</span>
+            <span>Building C</span>
+          </button>
+          <button type="button" class="btn-building-choice" data-building="D">
+            <span class="bldg-icon">🏢</span>
+            <span>Building D</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Test Presets (Scenario Selector) -->
       <div class="control-section">
         <span class="control-label">
-          <span>🎯 Kịch bản Test Demo</span>
-          <span style="color: #38bdf8; font-size: 0.7rem;">Mục 9 Plan</span>
+          <span>🎯 Quick Test Scenarios</span>
+          <span style="color: #38bdf8; font-size: 0.7rem; font-weight: 500;">Preset Demo</span>
         </span>
-        <select id="scenarioSelect" class="select-control" style="font-size: 0.85rem; padding: 0.5rem 0.75rem;">
-          <option value="normal">1. Bình thường (Còn nhiều chỗ ở mọi khu)</option>
-          <option value="zone_a_full">2. Tòa A đầy 100% (Điều phối sang tòa khác)</option>
-          <option value="guest_zone_full">3. Khu xe khách G đầy 100%</option>
-          <option value="lot_full">4. 🚨 CẢ BÃI XE ĐẦY 100% (Từ chối mở cổng)</option>
-          <option value="only_one_slot">5. Chỉ còn đúng 1 ô trống toàn bãi (D-06)</option>
-          <option value="resident_building_b">6. Cư dân Tòa B (51B56789)</option>
-          <option value="ocr_unreadable">7. Lỗi OCR: Không đọc được biển số</option>
-          <option value="ocr_no_vehicle">8. Lỗi OCR: Không phát hiện xe</option>
+        <select id="scenarioSelect" class="select-control">
+          <option value="normal">1. Normal (Ample bays available across all zones)</option>
+          <option value="zone_a_full">2. Building A 100% Full (Auto overflow re-routing)</option>
+          <option value="guest_zone_full">3. Guest Zone G 100% Full (Allocate nearest building)</option>
+          <option value="lot_full">4. 🚨 Entire Campus 100% Full (Access Denied)</option>
+          <option value="only_one_slot">5. Single Bay Remaining Across Campus (D-06)</option>
+          <option value="resident_building_b">6. Resident of Building B (51B56789)</option>
+          <option value="ocr_unreadable">7. OCR Error: Unreadable Plate</option>
+          <option value="ocr_no_vehicle">8. OCR Error: No Vehicle Detected</option>
         </select>
       </div>
 
-      <!-- Simulation Action Controls & Real Image Upload & Map JSON Upload -->
+      <!-- Gate Terminal Primary Actions -->
       <div class="btn-group">
         <div style="display: flex; gap: 0.5rem;">
           <button id="simulateEntryBtn" class="btn btn-primary" style="flex: 1;">
-            🚗 Trigger Gate Scan
+            🚗 Scan Vehicle Entry
           </button>
-          <label class="btn btn-secondary" style="margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Upload ảnh xe chụp thực tế">
-            📁 Tải ảnh xe
+          <label class="btn btn-secondary" style="margin: 0; cursor: pointer;" title="Upload real vehicle image file for OCR">
+            📁 Upload Photo
             <input type="file" id="imageUploadInput" accept="image/*" class="file-input">
           </label>
-        </div>
-        <div style="display: flex; gap: 0.5rem;">
-          <label class="btn btn-secondary" style="margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: 1;" title="Nạp sơ đồ bãi xe từ file JSON (parking_map.json)">
-            🗺️ Nạp sơ đồ (JSON)
-            <input type="file" id="mapUploadInput" accept=".json,application/json" class="file-input">
-          </label>
-          <button id="clearRouteBtn" class="btn btn-secondary" style="flex: 1;">
-            🔄 Reset Route
-          </button>
         </div>
       </div>
     </section>
@@ -129,11 +161,20 @@
     <!-- Right Column: Parking Lot Map & Visualizer -->
     <section class="panel" aria-labelledby="parking-map-title">
       <div class="panel-title">
-        <span id="parking-map-title">🗺️ Parking Campus 2D Navigation Map (30 Bays)</span>
+        <div class="panel-title-text" id="parking-map-title">
+          <span>🗺️</span>
+          <span>Campus 2D Navigation Map (30 Bays)</span>
+        </div>
         
-        <!-- Capacity Badge -->
-        <div id="capacityBadge" style="font-size: 0.82rem; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #86efac; padding: 0.25rem 0.6rem; border-radius: 9999px; font-weight: 600;">
-          Available: 20/30
+        <!-- Map Panel Toolbar -->
+        <div class="panel-toolbar">
+          <button id="clearRouteBtn" class="btn btn-secondary btn-sm" title="Clear current route and release reservation">
+            🔄 Reset Route
+          </button>
+          <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer;" title="Load campus map configuration from JSON file">
+            🗺️ Load Map JSON
+            <input type="file" id="mapUploadInput" accept=".json,application/json" class="file-input">
+          </label>
         </div>
       </div>
 
@@ -141,19 +182,19 @@
       <div class="map-stats">
         <div class="stat-item">
           <span class="stat-indicator free"></span>
-          <span>Free (Trống)</span>
+          <span>Free (Available)</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator reserved"></span>
-          <span>Reserved (Đã cấp)</span>
+          <span>Reserved (Allocated)</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator occupied"></span>
-          <span>Occupied (Đang đỗ)</span>
+          <span>Occupied</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator path"></span>
-          <span>A* Path</span>
+          <span>A* Route</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator elevator"></span>
@@ -167,38 +208,11 @@
 
       <!-- Canvas Wrapper -->
       <div class="canvas-wrapper">
-        <canvas id="parkingMap" width="840" height="620" aria-label="Interactive 2D Parking Map"></canvas>
+        <canvas id="parkingMap" width="840" height="620" aria-label="Interactive 2D Campus Parking Map"></canvas>
       </div>
     </section>
 
   </main>
-
-  <!-- Guest Destination Modal / Popup -->
-  <div id="guestModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-card">
-      <h2 id="modalTitle" class="modal-title">
-        <span>📍</span> Are you a guest? Select your destination:
-      </h2>
-      <p class="modal-desc" id="modalDesc">
-        Xe của bạn không nằm trong danh sách cư dân cố định. Vui lòng chọn điểm đến để hệ thống cấp chỗ đỗ tối ưu gần thang máy nhất:
-      </p>
-
-      <div class="form-group">
-        <label for="destinationSelect" class="form-label">Destination Building</label>
-        <select id="destinationSelect" class="select-control">
-          <option value="A">Building A</option>
-          <option value="B">Building B</option>
-          <option value="C">Building C</option>
-          <option value="D">Building D</option>
-        </select>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" id="cancelModalBtn" class="btn btn-secondary">Close</button>
-        <button type="button" id="findParkingBtn" class="btn btn-primary">Find Parking</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Scripts -->
   <script src="js/canvas.js"></script>

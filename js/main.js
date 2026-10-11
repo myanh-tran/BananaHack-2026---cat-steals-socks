@@ -1,13 +1,13 @@
 /**
  * js/main.js
- * Master Client Controller for SmartPark Campus.
- * Implements:
- * - Person 3 Hackathon Contract (USE_MOCK flag, Live FastAPI connectivity)
- * - 8 Test Scenarios (All 30 bays full, Zone A full, Guest full, OCR errors, Resident B)
- * - True RESERVED slot mechanics (Prevents double allocation)
- * - Overflow re-routing when a resident's building is 100% full
- * - Real image upload & camera preview
- * - 3-second polling loop for GET /api/slots
+ * Master Client Controller for SmartPark Campus (Phase 1 Refactored).
+ * Features:
+ * - 100% Professional English UI & feedback
+ * - Inline Guest Destination Selection (No disruptive full-screen modal)
+ * - Clean Gate Terminal & Interactive Campus Map split
+ * - Presets for 8 test scenarios
+ * - Real image upload support & Fast Mock Mode
+ * - 3-second polling loop for Live FastAPI backend (:8000)
  */
 
 // Global State
@@ -19,42 +19,42 @@ let currentPendingVehicle = null;
 // Built-in Scenarios (Fallback & Instant Demo)
 const MOCK_SCENARIOS = {
   normal: {
-    name: 'Bình thường (Còn nhiều chỗ)',
+    name: '1. Normal (Ample bays available across all zones)',
     gate: { status: 'ok', plate: '51A12345', type: 'resident', building: 'A', confidence: 0.94 },
     occupied: ['A-01', 'A-04', 'B-02', 'B-05', 'C-01', 'C-03', 'D-02', 'D-04', 'G-01', 'G-03']
   },
   zone_a_full: {
-    name: 'Tòa A đầy 100% (Điều phối sang tòa khác)',
+    name: '2. Building A 100% Full (Auto overflow re-routing)',
     gate: { status: 'ok', plate: '51A99999', type: 'resident', building: 'A', confidence: 0.92 },
     occupied: ['A-01', 'A-02', 'A-03', 'A-04', 'A-05', 'A-06', 'B-03', 'C-01', 'D-02', 'G-01']
   },
   guest_zone_full: {
-    name: 'Khu xe khách G đầy 100%',
+    name: '3. Guest Zone G 100% Full (Allocate nearest building)',
     gate: { status: 'ok', plate: '29A98246', type: 'guest', building: null, confidence: 0.89 },
     occupied: ['G-01', 'G-02', 'G-03', 'G-04', 'G-05', 'G-06', 'A-02', 'B-03', 'C-04']
   },
   lot_full: {
-    name: 'CẢ BÃI XE ĐẦY 100% (FULL)',
+    name: '4. 🚨 Entire Campus 100% Full (Access Denied)',
     gate: { status: 'ok', plate: '30E88888', type: 'guest', building: null, confidence: 0.96 },
     all_occupied: true
   },
   only_one_slot: {
-    name: 'Chỉ còn đúng 1 ô trống toàn bãi (D-06)',
+    name: '5. Single Bay Remaining Across Campus (D-06)',
     gate: { status: 'ok', plate: '43A67890', type: 'resident', building: 'B', confidence: 0.91 },
     all_occupied_except: ['D-06']
   },
   resident_building_b: {
-    name: 'Cư dân Tòa B (51B56789)',
+    name: '6. Resident of Building B (51B56789)',
     gate: { status: 'ok', plate: '51B56789', type: 'resident', building: 'B', confidence: 0.95 },
     occupied: ['B-01', 'B-03', 'A-01', 'C-02', 'D-01']
   },
   ocr_unreadable: {
-    name: 'Lỗi OCR: Không đọc được biển số',
-    gate: { status: 'error', code: 'PLATE_UNREADABLE', message: 'Không đọc được biển số, vui lòng chụp lại' }
+    name: '7. OCR Error: Unreadable Plate',
+    gate: { status: 'error', code: 'PLATE_UNREADABLE', message: 'Unable to recognize license plate. Please scan again.' }
   },
   ocr_no_vehicle: {
-    name: 'Lỗi OCR: Không phát hiện xe',
-    gate: { status: 'error', code: 'NO_VEHICLE', message: 'Không phát hiện xe trước rào chắn' }
+    name: '8. OCR Error: No Vehicle Detected',
+    gate: { status: 'error', code: 'NO_VEHICLE', message: 'No vehicle detected before barrier.' }
   }
 };
 
@@ -78,12 +78,11 @@ const elevatorInfoDisplay = document.getElementById('elevatorInfoDisplay');
 const simulateEntryBtn = document.getElementById('simulateEntryBtn');
 const clearRouteBtn = document.getElementById('clearRouteBtn');
 const imageUploadInput = document.getElementById('imageUploadInput');
-
-const guestModal = document.getElementById('guestModal');
-const destinationSelect = document.getElementById('destinationSelect');
-const findParkingBtn = document.getElementById('findParkingBtn');
-const cancelModalBtn = document.getElementById('cancelModalBtn');
 const mapUploadInput = document.getElementById('mapUploadInput');
+
+// Inline Guest Destination Selector
+const guestDestinationCard = document.getElementById('guestDestinationCard');
+const cancelGuestBtn = document.getElementById('cancelGuestBtn');
 
 /**
  * 1. CAPACITY & OCCUPANCY UI UPDATE
@@ -92,7 +91,7 @@ function updateCapacityUI() {
   if (!window.parkingCanvas) return;
   const stats = window.parkingCanvas.getParkingStats();
   if (capacityBadge) {
-    capacityBadge.textContent = `Available: ${stats.free}/${stats.total} bays`;
+    capacityBadge.innerHTML = `<span>🅿️</span> Available: ${stats.free}/${stats.total} Bays`;
     if (stats.free === 0) {
       capacityBadge.style.background = 'rgba(239, 68, 68, 0.2)';
       capacityBadge.style.borderColor = 'rgba(239, 68, 68, 0.5)';
@@ -110,9 +109,10 @@ function updateCapacityUI() {
  */
 function showAlert(message, type = 'error') {
   if (!alertContainer) return;
-  alertContainer.style.display = 'block';
+  alertContainer.style.display = 'flex';
   alertContainer.className = `lot-alert-banner ${type}`;
-  alertContainer.innerHTML = `<span>⚠️</span> <span>${message}</span>`;
+  const icon = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '🚨';
+  alertContainer.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
 }
 
 function clearAlert() {
@@ -122,12 +122,30 @@ function clearAlert() {
 }
 
 /**
- * 3. SCENARIO LOADER (Mục 9 Kế hoạch)
- * Populates 30 slots state based on selected test scenario.
+ * 3. INLINE GUEST CARD DISPLAY TOGGLES
+ */
+function showGuestCard() {
+  if (guestDestinationCard) {
+    guestDestinationCard.classList.remove('hidden');
+    guestDestinationCard.classList.add('show');
+  }
+}
+
+function hideGuestCard() {
+  if (guestDestinationCard) {
+    guestDestinationCard.classList.remove('show');
+    guestDestinationCard.classList.add('hidden');
+  }
+}
+
+/**
+ * 4. SCENARIO PRESET LOADER
+ * Populates 30 slots state based on selected test preset.
  */
 function applyScenario(scenarioKey) {
   currentScenarioKey = scenarioKey;
   clearAlert();
+  hideGuestCard();
 
   const scenario = MOCK_SCENARIOS[scenarioKey];
   if (!scenario || !window.parkingCanvas) return;
@@ -135,19 +153,19 @@ function applyScenario(scenarioKey) {
   const allSlots = window.parkingCanvas.getActiveSlots();
 
   if (scenario.all_occupied) {
-    // 100% Full Lot
+    // 100% Full Campus
     allSlots.forEach((s) => {
       s.occupied = true;
       s.isReserved = false;
     });
   } else if (scenario.all_occupied_except) {
-    // Only 1 slot free
+    // Exactly 1 bay remaining
     allSlots.forEach((s) => {
       s.occupied = !scenario.all_occupied_except.includes(s.id);
       s.isReserved = false;
     });
   } else if (scenario.occupied || scenario.occupied_slots) {
-    // Standard occupied list
+    // Standard occupied array
     const occupiedList = scenario.occupied || scenario.occupied_slots || [];
     allSlots.forEach((s) => {
       s.occupied = occupiedList.includes(s.id);
@@ -158,27 +176,39 @@ function applyScenario(scenarioKey) {
   window.parkingCanvas.initParkingMap();
   updateCapacityUI();
 
-  // Reset route and previews
+  // Reset route and preview values
   if (cameraPreviewImg) cameraPreviewImg.style.display = 'none';
-  if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'None';
-  if (routeInfoDisplay) routeInfoDisplay.textContent = 'Awaiting car';
+  if (ocrPlateDisplay) {
+    ocrPlateDisplay.textContent = '--';
+    ocrPlateDisplay.classList.remove('error');
+  }
+  if (ocrStatusBadge) {
+    ocrStatusBadge.textContent = 'Awaiting Vehicle';
+    ocrStatusBadge.className = 'badge badge-guest';
+    ocrStatusBadge.style.background = '';
+    ocrStatusBadge.style.color = '';
+  }
+  if (ocrVehicleType) ocrVehicleType.textContent = '--';
+  if (ocrSlotDisplay) ocrSlotDisplay.textContent = '--';
+  if (routeInfoDisplay) routeInfoDisplay.textContent = 'Awaiting vehicle scan';
   if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
 }
 
 /**
- * 4. GATE OCR HANDLER (Supports Real API & Mock)
+ * 5. GATE OCR HANDLER (Supports Real API & Mock)
  * Calls POST /api/gate or resolves mock payload.
  *
  * @param {File|null} uploadedImageFile
  */
 async function triggerGateScan(uploadedImageFile = null) {
   clearAlert();
+  hideGuestCard();
   console.log(`[GateVision] Scanning vehicle... Mode: ${USE_MOCK ? 'MOCK' : 'LIVE API'}`);
 
   let gateResponse = null;
 
   if (USE_MOCK) {
-    // Get scenario mock data
+    // Mock simulation payload
     const scenario = MOCK_SCENARIOS[currentScenarioKey] || MOCK_SCENARIOS.normal;
     gateResponse = scenario.gate;
   } else {
@@ -208,7 +238,7 @@ async function triggerGateScan(uploadedImageFile = null) {
       gateResponse = await res.json();
     } catch (err) {
       console.error('[GateAPI Error]', err);
-      showAlert(`Lỗi kết nối Backend: ${err.message}. Đã bật fallback Mock.`, 'warning');
+      showAlert(`Backend connection error: ${err.message}. Switched to Mock mode.`, 'warning');
       gateResponse = MOCK_SCENARIOS.normal.gate;
     }
   }
@@ -217,8 +247,8 @@ async function triggerGateScan(uploadedImageFile = null) {
 }
 
 /**
- * 5. GATE OCR RESULT DISPATCHER
- * Evaluates plate, resident status, and routes the vehicle.
+ * 6. GATE OCR RESULT DISPATCHER
+ * Evaluates plate, resident classification, and routes the vehicle.
  */
 function handleGateResult(data) {
   console.log('[GateVision] OCR Result:', data);
@@ -235,7 +265,12 @@ function handleGateResult(data) {
       ocrStatusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
       ocrStatusBadge.style.color = '#f87171';
     }
-    showAlert(`[${data.code}] ${data.message || 'Lỗi nhận dạng ảnh xe.'}`, 'error');
+    if (ocrVehicleType) ocrVehicleType.textContent = 'Unidentified';
+    if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'None';
+    if (routeInfoDisplay) routeInfoDisplay.textContent = 'Scan rejected';
+    if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
+
+    showAlert(`[${data.code}] ${data.message || 'Vehicle image recognition failed.'}`, 'error');
     return;
   }
 
@@ -253,20 +288,26 @@ function handleGateResult(data) {
       ocrStatusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
       ocrStatusBadge.style.color = '#f87171';
     }
-    if (ocrVehicleType) ocrVehicleType.textContent = data.type === 'resident' ? `Cư dân Tòa ${data.building}` : 'Khách vãng lai';
-    if (ocrSlotDisplay) ocrSlotDisplay.textContent = '0/30 (BÃI KÍN CHỖ)';
-    if (routeInfoDisplay) routeInfoDisplay.textContent = 'Barrier đóng. Không thể cấp chỗ.';
-    showAlert('🚨 RẤT TIẾC, TOÀN BỘ BÃI ĐỖ XE ĐÃ ĐẦY 100% (0/30). BARRIER TỪ CHỐI MỞ CỔNG!', 'error');
+    if (ocrVehicleType) {
+      ocrVehicleType.textContent = data.type === 'resident' ? `Resident (Building ${data.building})` : 'Guest Visitor';
+    }
+    if (ocrSlotDisplay) ocrSlotDisplay.textContent = '0/30 (LOT FULL)';
+    if (routeInfoDisplay) routeInfoDisplay.textContent = 'Barrier locked. No bays available.';
+    if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
+
+    showAlert('🚨 CAMPUS IS 100% FULL (0/30). ENTRANCE BARRIER ACCESS DENIED!', 'error');
     return;
   }
 
-  // CASE 3: Resident Vehicle (Auto-allocation to building)
+  // CASE 3: Resident Vehicle (Auto-allocation to building elevator)
   if (data.type === 'resident' && data.building) {
     if (ocrStatusBadge) {
-      ocrStatusBadge.textContent = `RESIDENT (TÒA ${data.building})`;
+      ocrStatusBadge.textContent = `RESIDENT (BLDG ${data.building})`;
       ocrStatusBadge.className = 'badge badge-staff';
+      ocrStatusBadge.style.background = '';
+      ocrStatusBadge.style.color = '';
     }
-    if (ocrVehicleType) ocrVehicleType.textContent = `Cư dân Tòa ${data.building}`;
+    if (ocrVehicleType) ocrVehicleType.textContent = `Resident (Building ${data.building})`;
 
     currentPendingVehicle = data;
     allocateSlotAndRoute({
@@ -277,21 +318,26 @@ function handleGateResult(data) {
     return;
   }
 
-  // CASE 4: Guest Vehicle (Prompt modal)
+  // CASE 4: Guest Vehicle (Trigger inline building destination selector)
   if (data.type === 'guest') {
     if (ocrStatusBadge) {
       ocrStatusBadge.textContent = 'GUEST VISITOR';
       ocrStatusBadge.className = 'badge badge-guest';
+      ocrStatusBadge.style.background = '';
+      ocrStatusBadge.style.color = '';
     }
-    if (ocrVehicleType) ocrVehicleType.textContent = 'Khách vãng lai (Cần chọn tòa)';
+    if (ocrVehicleType) ocrVehicleType.textContent = 'Guest (Select Destination)';
+    if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'Pending Selection...';
+    if (routeInfoDisplay) routeInfoDisplay.textContent = 'Choose target building below';
+    if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
 
     currentPendingVehicle = data;
-    showGuestModal();
+    showGuestCard();
   }
 }
 
 /**
- * 6. SMART ALLOCATION & A* ROUTING EXECUTION
+ * 7. SMART ALLOCATION & A* ROUTING EXECUTION
  * Uses assignOptimalParkingSlot(), locks slot with reserveSlot(), and draws A* path.
  */
 function allocateSlotAndRoute({ type, building, plate }) {
@@ -300,8 +346,8 @@ function allocateSlotAndRoute({ type, building, plate }) {
   const result = window.parkingCanvas.assignOptimalParkingSlot({ type, building });
 
   if (result.status === 'FULL' || !result.slot) {
-    showAlert(result.message || 'Không tìm được chỗ đỗ xe trống.', 'error');
-    if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'KÍN CHỖ';
+    showAlert(result.message || 'No available parking bay found.', 'error');
+    if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'LOT FULL';
     return;
   }
 
@@ -309,11 +355,11 @@ function allocateSlotAndRoute({ type, building, plate }) {
   const elevator = result.elevator;
   const distanceMeters = result.distanceMeters;
 
-  // 1. Lock slot state as RESERVED immediately
+  // 1. Lock slot state as RESERVED immediately (Prevents double-allocation)
   window.parkingCanvas.reserveSlot(targetSlot.id, plate);
   updateCapacityUI();
 
-  // 2. Compute A* Path from Gate to Bay
+  // 2. Compute A* Path from Gate to Target Bay
   const startPoint = window.parkingCanvas.GATE_POSITION;
   const goalPoint = targetSlot.center;
   const calculatedPath = window.parkingCanvas.findAStarPath(startPoint, goalPoint, targetSlot);
@@ -334,31 +380,14 @@ function allocateSlotAndRoute({ type, building, plate }) {
     routeInfoDisplay.textContent = `A* Path (${calculatedPath.length} waypoints) -> ${targetSlot.id}`;
   }
   if (elevatorInfoDisplay) {
-    elevatorInfoDisplay.textContent = `${elevator.name} (~${distanceMeters}m đi bộ)`;
+    elevatorInfoDisplay.textContent = `${elevator.name} (~${distanceMeters}m walk)`;
   }
 
-  // 5. Overflow feedback alert (If resident's building was full)
+  // 5. Overflow feedback alert
   if (result.overflow) {
     showAlert(result.message, 'warning');
   } else {
-    showAlert(`Đã cấp thành công ô ${targetSlot.id}. Barrier mở, xin mời xe vào!`, 'success');
-  }
-}
-
-/**
- * 7. MODAL DISPLAY TOGGLES
- */
-function showGuestModal() {
-  if (guestModal) {
-    guestModal.classList.remove('hidden');
-    guestModal.classList.add('show');
-  }
-}
-
-function hideGuestModal() {
-  if (guestModal) {
-    guestModal.classList.remove('show');
-    guestModal.classList.add('hidden');
+    showAlert(`Bay ${targetSlot.id} successfully allocated! Barrier opened.`, 'success');
   }
 }
 
@@ -402,12 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
     modeToggle.addEventListener('change', (e) => {
       USE_MOCK = e.target.value === 'mock';
       if (serverStatusText) {
-        serverStatusText.textContent = USE_MOCK ? 'USE_MOCK: Active (Simulated API)' : 'Connecting http://localhost:8000...';
+        serverStatusText.textContent = USE_MOCK ? 'Mock Mode (Simulation API)' : 'Connecting http://localhost:8000...';
       }
       if (!USE_MOCK) {
         startPolling();
       } else {
         if (serverStatusDot) serverStatusDot.style.backgroundColor = '#38bdf8';
+        if (pollingTimer) clearInterval(pollingTimer);
       }
     });
   }
@@ -446,11 +476,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Find Parking in Guest Modal
-  if (findParkingBtn) {
-    findParkingBtn.addEventListener('click', () => {
-      const selectedBuilding = destinationSelect ? destinationSelect.value : 'A';
-      hideGuestModal();
+  // Inline Guest Destination Choice Buttons
+  document.querySelectorAll('.btn-building-choice').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const selectedBuilding = btn.getAttribute('data-building') || 'A';
+      hideGuestCard();
 
       if (currentPendingVehicle) {
         allocateSlotAndRoute({
@@ -460,16 +490,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
-  }
+  });
 
-  // Close Modal
-  if (cancelModalBtn) {
-    cancelModalBtn.addEventListener('click', () => {
-      hideGuestModal();
+  // Cancel/Dismiss Guest Selector
+  if (cancelGuestBtn) {
+    cancelGuestBtn.addEventListener('click', () => {
+      hideGuestCard();
+      if (ocrStatusBadge) {
+        ocrStatusBadge.textContent = 'Cancelled';
+      }
     });
   }
 
-  // Admin Custom Campus Map JSON Upload
+  // Campus Blueprint JSON Upload
   if (mapUploadInput) {
     mapUploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -482,13 +515,13 @@ document.addEventListener('DOMContentLoaded', () => {
               const success = window.parkingCanvas.loadParkingMapConfig(config);
               if (success) {
                 applyScenario(currentScenarioKey);
-                showAlert(`Đã nạp sơ đồ bãi xe thành công: ${config.campus_name || file.name}`, 'success');
+                showAlert(`Successfully loaded campus blueprint: ${config.campus_name || file.name}`, 'success');
               } else {
-                showAlert('File JSON không đúng cấu trúc sơ đồ bãi xe.', 'error');
+                showAlert('Invalid JSON parking map blueprint structure.', 'error');
               }
             }
           } catch (err) {
-            showAlert('Lỗi đọc file cấu hình JSON: ' + err.message, 'error');
+            showAlert('Error parsing JSON configuration: ' + err.message, 'error');
           }
         };
         reader.readAsText(file);
@@ -513,14 +546,26 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCapacityUI();
       }
       clearAlert();
+      hideGuestCard();
       currentPendingVehicle = null;
-      if (routeInfoDisplay) routeInfoDisplay.textContent = 'None (Waiting for car)';
+      if (routeInfoDisplay) routeInfoDisplay.textContent = 'Awaiting vehicle scan';
       if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
-      if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'None';
+      if (ocrSlotDisplay) ocrSlotDisplay.textContent = '--';
+      if (ocrPlateDisplay) {
+        ocrPlateDisplay.textContent = '--';
+        ocrPlateDisplay.classList.remove('error');
+      }
+      if (ocrStatusBadge) {
+        ocrStatusBadge.textContent = 'Awaiting Vehicle';
+        ocrStatusBadge.className = 'badge badge-guest';
+        ocrStatusBadge.style.background = '';
+        ocrStatusBadge.style.color = '';
+      }
+      if (ocrVehicleType) ocrVehicleType.textContent = '--';
     });
   }
 
-  // Try loading external JSON configurations if hosted on server
+  // Load external JSON configurations if available
   (async function tryLoadExternalConfig() {
     try {
       const res = await fetch('parking_map.json');
@@ -531,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (_) {
-      // Local protocol fallback
+      // Local file fallback
     }
 
     try {
@@ -547,11 +592,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })();
 
-  // Initial Scenario Setup
+  // Initial Scenario Setup (Wait in ready state)
   applyScenario('normal');
-
-  // Trigger initial demo vehicle scan
-  setTimeout(() => {
-    triggerGateScan();
-  }, 500);
 });
