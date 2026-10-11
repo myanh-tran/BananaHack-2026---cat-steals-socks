@@ -96,6 +96,43 @@ const customVehicleTypeSelect = document.getElementById('customVehicleTypeSelect
 const guestDestinationCard = document.getElementById('guestDestinationCard');
 const cancelGuestBtn = document.getElementById('cancelGuestBtn');
 
+// Live Gate Activity Log References
+const activityLogTbody = document.getElementById('activityLogTbody');
+const recentActivityLogs = [];
+
+/**
+ * Appends a real-time event to the Live Activity Audit Log table.
+ */
+function logActivity(event, plate, bay, detail, statusClass = 'entry') {
+  if (!activityLogTbody) return;
+
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+
+  recentActivityLogs.unshift({
+    time: timeStr,
+    event,
+    plate,
+    bay,
+    detail,
+    statusClass
+  });
+
+  if (recentActivityLogs.length > 7) {
+    recentActivityLogs.pop();
+  }
+
+  activityLogTbody.innerHTML = recentActivityLogs.map((item) => `
+    <tr>
+      <td style="color: var(--text-muted); font-family: var(--font-mono);">${item.time}</td>
+      <td style="font-weight: 700; font-family: var(--font-mono); color: #f8fafc;">${item.plate}</td>
+      <td style="color: var(--text-muted);">${item.detail}</td>
+      <td><strong style="color: #38bdf8;">${item.bay}</strong></td>
+      <td><span class="activity-badge ${item.statusClass}">${item.event}</span></td>
+    </tr>
+  `).join('');
+}
+
 /**
  * Generates a realistic license plate format for testing.
  */
@@ -315,6 +352,7 @@ function handleGateResult(data) {
     if (routeInfoDisplay) routeInfoDisplay.textContent = 'Scan rejected';
     if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
 
+    logActivity('OCR ERROR', 'N/A', 'NONE', data.message || 'Image Recognition Error', 'denied');
     showAlert(`[${data.code}] ${data.message || 'Vehicle image recognition failed.'}`, 'error');
     return;
   }
@@ -345,6 +383,7 @@ function handleGateResult(data) {
     if (routeInfoDisplay) routeInfoDisplay.textContent = 'Barrier locked. No bays available.';
     if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
 
+    logActivity('DENIED', data.plate || 'UNKNOWN', 'NONE', 'Campus 100% Full', 'denied');
     showAlert('🚨 CAMPUS IS 100% FULL (0/30). ENTRANCE BARRIER ACCESS DENIED!', 'error');
     return;
   }
@@ -388,7 +427,7 @@ function handleGateResult(data) {
 
 /**
  * 7. SMART ALLOCATION & A* ROUTING EXECUTION
- * Uses assignOptimalParkingSlot(), locks slot with reserveSlot(), and draws A* path.
+ * Uses assignOptimalParkingSlot(), locks slot with reserveSlot(), and triggers car navigation animation.
  */
 function allocateSlotAndRoute({ type, building, plate }) {
   if (!window.parkingCanvas) return;
@@ -398,12 +437,14 @@ function allocateSlotAndRoute({ type, building, plate }) {
   if (result.status === 'FULL' || !result.slot) {
     showAlert(result.message || 'No available parking bay found.', 'error');
     if (ocrSlotDisplay) ocrSlotDisplay.textContent = 'LOT FULL';
+    logActivity('DENIED', plate, 'NONE', 'No Vacancy Available', 'denied');
     return;
   }
 
   const targetSlot = result.slot;
   const elevator = result.elevator;
   const distanceMeters = result.distanceMeters;
+  const classificationText = type === 'resident' ? `Resident (Bldg ${building})` : `Guest (Bldg ${building})`;
 
   // 1. Lock slot state as RESERVED immediately (Prevents double-allocation)
   window.parkingCanvas.reserveSlot(targetSlot.id, plate);
@@ -414,30 +455,48 @@ function allocateSlotAndRoute({ type, building, plate }) {
   const goalPoint = targetSlot.center;
   const calculatedPath = window.parkingCanvas.findAStarPath(startPoint, goalPoint, targetSlot);
 
-  // 3. Draw Vehicular A* Path + Pedestrian Walking Line to Elevator
-  const walkingInfo = {
-    elevatorPos: elevator ? elevator.position : null,
-    distanceMeters: distanceMeters
-  };
-
-  window.parkingCanvas.drawRoutingPath(calculatedPath, walkingInfo);
+  // 3. Log initial entry in activity audit trail
+  logActivity('ENTERED', plate, targetSlot.id, classificationText, 'entry');
 
   // 4. Update Left Panel Details
   if (ocrSlotDisplay) {
-    ocrSlotDisplay.textContent = `${targetSlot.id} (RESERVED)`;
+    ocrSlotDisplay.textContent = `${targetSlot.id} (TRANSIT)`;
   }
   if (routeInfoDisplay) {
-    routeInfoDisplay.textContent = `A* Path (${calculatedPath.length} waypoints) -> ${targetSlot.id}`;
+    routeInfoDisplay.textContent = `Driving to ${targetSlot.id} (${calculatedPath.length} waypoints)`;
   }
   if (elevatorInfoDisplay) {
     elevatorInfoDisplay.textContent = `${elevator.name} (~${distanceMeters}m walk)`;
   }
 
-  // 5. Overflow feedback alert
+  // 5. Walking route payload
+  const walkingInfo = {
+    elevatorPos: elevator ? elevator.position : null,
+    distanceMeters: distanceMeters
+  };
+
+  // 6. Trigger Smooth Car Driving Animation Along A* Path
+  if (window.parkingCanvas.animateCarAlongRoute) {
+    window.parkingCanvas.animateCarAlongRoute(calculatedPath, walkingInfo, targetSlot.id, () => {
+      // Arrival callback: vehicle parked!
+      if (ocrSlotDisplay) {
+        ocrSlotDisplay.textContent = `${targetSlot.id} (PARKED)`;
+      }
+      if (routeInfoDisplay) {
+        routeInfoDisplay.textContent = `Parked at ${targetSlot.id}. Route to ${elevator.name} active.`;
+      }
+      updateCapacityUI();
+      logActivity('PARKED', plate, targetSlot.id, classificationText, 'parked');
+    });
+  } else {
+    window.parkingCanvas.drawRoutingPath(calculatedPath, walkingInfo);
+  }
+
+  // 7. Overflow feedback alert
   if (result.overflow) {
     showAlert(result.message, 'warning');
   } else {
-    showAlert(`Bay ${targetSlot.id} successfully allocated! Barrier opened.`, 'success');
+    showAlert(`Bay ${targetSlot.id} assigned! Vehicle navigating along optimal A* route.`, 'success');
   }
 }
 
@@ -478,6 +537,7 @@ function startPolling() {
 window.onSlotReleased = (slotId) => {
   updateCapacityUI();
   showAlert(`Bay ${slotId} released! Vacant for incoming vehicles.`, 'success');
+  logActivity('CHECK-OUT', 'RELEASED', slotId, 'Vehicle Departure', 'checkout');
   if (ocrSlotDisplay && ocrSlotDisplay.textContent.includes(slotId)) {
     ocrSlotDisplay.textContent = 'None';
     routeInfoDisplay.textContent = 'Route cleared';
@@ -487,6 +547,7 @@ window.onSlotReleased = (slotId) => {
 window.onSlotOccupied = (slotId) => {
   updateCapacityUI();
   showAlert(`Bay ${slotId} manually parked.`, 'warning');
+  logActivity('MANUAL PARK', 'MANUAL', slotId, 'Direct Park', 'parked');
 };
 
 // 9. EVENT LISTENERS INITIALIZATION

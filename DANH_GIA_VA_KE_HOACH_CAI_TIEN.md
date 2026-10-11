@@ -152,9 +152,15 @@ flowchart TD
 4. **Giữ các kịch bản mẫu làm Quick Presets:**
    - Tab Presets giữ nguyên 8 kịch bản để nạp nhanh bối cảnh khi cần trình diễn các case đặc thù.
 
-### Giai đoạn 3: Trực quan hóa sinh động (Animation & Lifecycle) - [PENDING]
-1. **Hoạt ảnh xe ô tô di chuyển (Car Driving Animation):**
-   - Khi thuật toán A\* sinh ra đường đi, một biểu tượng xe ô tô nhỏ sẽ chuyển động mượt dọc theo đường màu vàng từ Cổng tới ô đỗ.
-   - Khi xe tới nơi, ô đỗ tự động chuyển từ trạng thái `RESERVED` (vàng) sang `OCCUPIED` (đỏ).
-2. **Bảng Nhật ký ra/vào (Live Activity Log):**
-   - Hiển thị danh sách 5 lượt xe gần nhất: Biển số xe, Loại đối tượng, Ô được cấp, Thời gian vào/ra, Trạng thái.
+### Giai đoạn 3: Trực quan hóa sinh động & Khắc phục hoàn toàn chồng chéo (Animation & Lifecycle) - [COMPLETED]
+1. **Khắc phục triệt để các phần tử chồng chéo trên Sa bàn (Layout Overlaps Resolved):**
+   - **Thang máy:** Dời toàn bộ 4 thang máy (`ELV-A`, `ELV-B`, `ELV-C`, `ELV-D`) ra ngoài phạm vi ô đỗ xe, đặt cân đối cạnh tiêu đề tòa nhà (`y = 30` và `y = 520`), loại bỏ hoàn toàn việc thang máy đè lên các ô `A-03, A-04, B-03, B-04, C-03, C-04, D-03, D-04`.
+   - **Vật cản bảo trì (`🚧 HAZ-1`):** Chuyển từ vị trí đè lên ô `G-04` sang làn đường giao thông chung (`x = 435, y = 355`), không còn che khuất ô đỗ.
+   - **Cổng vào (`ENTRY GATE`):** Thu gọn và bố trí độc lập ở góc dưới bên trái (`x = 15, y = 548`), không còn che đè nhãn `BUILDING C`.
+   - **Nhãn cự ly đi bộ (`🚶 ~Xm`):** Tự động phát hiện và né tránh va chạm với trụ bê tông `P3`, không còn bị đè lên cột.
+2. **Hoạt ảnh xe ô tô di chuyển thời gian thực (Smooth Car Driving Animation):**
+   - Xe ô tô dạng thể thao kèm đèn pha rọi sáng phía trước chuyển động mượt mà (60fps) theo từng điểm uốn của lộ trình A\* từ Cổng vào tới ô đỗ xe (~1.75s).
+   - Trong quá trình xe đang chạy, ô đỗ hiển thị màu vàng hổ phách `RESERVED` (`TRANSIT`).
+   - Khi xe tới nơi, ô đỗ tự động chuyển sang màu đỏ `OCCUPIED` (`PARKED`), đồng thời vẽ đường đi bộ đứt đoạn tới thang máy gần nhất.
+3. **Bảng Nhật ký ra/vào trực tiếp (Live Gate Activity Audit Trail):**
+   - Hiển thị bảng kiểm toán sự kiện thời gian thực (Thời gian, Biển số, Phân loại, Ô đỗ, Sự kiện: `ENTERED`, `PARKED`, `CHECK-OUT`, `DENIED`, `OCR ERROR`).

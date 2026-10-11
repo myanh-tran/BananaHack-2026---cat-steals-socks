@@ -1,6 +1,6 @@
 {
   "campus_name": "SmartPark AI Campus 2026",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "canvas": {
     "width": 840,
     "height": 620
@@ -8,22 +8,22 @@
   "gate": {
     "id": "GATE-01",
     "name": "ENTRY GATE",
-    "position": [70, 520],
-    "width": 100,
-    "height": 40
+    "position": [65, 565],
+    "width": 95,
+    "height": 34
   },
   "elevators": [
-    { "id": "ELV-A", "name": "Elevator A", "zone": "A", "position": [240, 68] },
-    { "id": "ELV-B", "name": "Elevator B", "zone": "B", "position": [640, 68] },
-    { "id": "ELV-C", "name": "Elevator C", "zone": "C", "position": [240, 435] },
-    { "id": "ELV-D", "name": "Elevator D", "zone": "D", "position": [640, 435] }
+    { "id": "ELV-A", "name": "Elevator A", "zone": "A", "position": [295, 30] },
+    { "id": "ELV-B", "name": "Elevator B", "zone": "B", "position": [695, 30] },
+    { "id": "ELV-C", "name": "Elevator C", "zone": "C", "position": [295, 520] },
+    { "id": "ELV-D", "name": "Elevator D", "zone": "D", "position": [695, 520] }
   ],
   "obstacles": [
-    { "id": "PIL-1", "type": "pillar", "x": 235, "y": 175, "width": 20, "height": 20, "label": "P1" },
-    { "id": "PIL-2", "type": "pillar", "x": 635, "y": 175, "width": 20, "height": 20, "label": "P2" },
-    { "id": "PIL-3", "type": "pillar", "x": 235, "y": 360, "width": 20, "height": 20, "label": "P3" },
-    { "id": "PIL-4", "type": "pillar", "x": 635, "y": 360, "width": 20, "height": 20, "label": "P4" },
-    { "id": "HAZ-1", "type": "hazard", "x": 430, "y": 260, "width": 30, "height": 30, "label": "🚧" }
+    { "id": "PIL-1", "type": "pillar", "x": 235, "y": 165, "width": 20, "height": 20, "label": "P1" },
+    { "id": "PIL-2", "type": "pillar", "x": 635, "y": 165, "width": 20, "height": 20, "label": "P2" },
+    { "id": "PIL-3", "type": "pillar", "x": 235, "y": 370, "width": 20, "height": 20, "label": "P3" },
+    { "id": "PIL-4", "type": "pillar", "x": 635, "y": 370, "width": 20, "height": 20, "label": "P4" },
+    { "id": "HAZ-1", "type": "hazard", "x": 435, "y": 355, "width": 28, "height": 28, "label": "🚧" }
   ],
   "zones": [
     {
@@ -32,7 +32,7 @@
       "type": "resident",
       "count": 6,
       "startX": 85,
-      "startY": 75,
+      "startY": 65,
       "slotWidth": 46,
       "slotHeight": 65,
       "slotGap": 10,
@@ -44,7 +44,7 @@
       "type": "resident",
       "count": 6,
       "startX": 485,
-      "startY": 75,
+      "startY": 65,
       "slotWidth": 46,
       "slotHeight": 65,
       "slotGap": 10,
@@ -56,7 +56,7 @@
       "type": "guest",
       "count": 6,
       "startX": 245,
-      "startY": 235,
+      "startY": 230,
       "slotWidth": 50,
       "slotHeight": 65,
       "slotGap": 14,
@@ -68,7 +68,7 @@
       "type": "resident",
       "count": 6,
       "startX": 85,
-      "startY": 435,
+      "startY": 425,
       "slotWidth": 46,
       "slotHeight": 65,
       "slotGap": 10,
@@ -80,7 +80,7 @@
       "type": "resident",
       "count": 6,
       "startX": 485,
-      "startY": 435,
+      "startY": 425,
       "slotWidth": 46,
       "slotHeight": 65,
       "slotGap": 10,

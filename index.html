@@ -264,6 +264,34 @@
           </div>
         </div>
       </div>
+
+      <!-- Live Gate Activity Log (Audit Trail) -->
+      <div class="activity-log-card">
+        <div class="activity-log-header">
+          <span>📋 Live Gate & Bay Activity Audit Log</span>
+          <span style="font-size: 0.72rem; color: #94a3b8; font-weight: normal;">Recent Vehicle Events</span>
+        </div>
+        <div class="activity-log-table-wrapper">
+          <table class="activity-log-table">
+            <thead>
+              <tr>
+                <th style="width: 85px;">Time</th>
+                <th style="width: 105px;">Plate</th>
+                <th>Classification</th>
+                <th style="width: 80px;">Bay</th>
+                <th style="width: 110px;">Event</th>
+              </tr>
+            </thead>
+            <tbody id="activityLogTbody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 0.8rem;">
+                  Awaiting gate scans or bay actions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
   </main>
