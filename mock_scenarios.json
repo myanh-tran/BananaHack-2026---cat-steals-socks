@@ -1,0 +1,94 @@
+{
+  "scenarios": {
+    "normal": {
+      "name": "Bình thường (Còn nhiều chỗ)",
+      "description": "Các tòa A, B, C, D và khu khách G đều còn nhiều chỗ trống.",
+      "gate": {
+        "status": "ok",
+        "plate": "51A12345",
+        "type": "resident",
+        "building": "A",
+        "confidence": 0.94
+      },
+      "occupied_slots": ["A-01", "A-04", "B-02", "B-05", "C-01", "C-03", "D-02", "D-04", "G-01", "G-03"]
+    },
+    "zone_a_full": {
+      "name": "Tòa A đầy 100% (Các tòa khác còn chỗ)",
+      "description": "Toàn bộ 6 ô của Tòa A đã kín chỗ. Hệ thống sẽ tự điều phối sang ô gần nhất ở tòa lân cận.",
+      "gate": {
+        "status": "ok",
+        "plate": "51A99999",
+        "type": "resident",
+        "building": "A",
+        "confidence": 0.92
+      },
+      "occupied_slots": ["A-01", "A-02", "A-03", "A-04", "A-05", "A-06", "B-03", "C-01", "D-02", "G-01"]
+    },
+    "guest_zone_full": {
+      "name": "Khu xe khách G đầy 100%",
+      "description": "Khu khách G-01..G-06 đã kín. Xe khách sẽ được hỏi đích đến hoặc điều phối sang tòa lân cận.",
+      "gate": {
+        "status": "ok",
+        "plate": "29A98246",
+        "type": "guest",
+        "building": null,
+        "confidence": 0.89
+      },
+      "occupied_slots": ["G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "A-02", "B-03", "C-04"]
+    },
+    "lot_full": {
+      "name": "CẢ BÃI XE ĐẦY 100% (FULL)",
+      "description": "Tất cả 30 ô đỗ xe đều đã kín. Cổng barrier từ chối mở và phát cảnh báo PARKING FULL.",
+      "gate": {
+        "status": "ok",
+        "plate": "30E88888",
+        "type": "guest",
+        "building": null,
+        "confidence": 0.96
+      },
+      "all_occupied": true
+    },
+    "only_one_slot": {
+      "name": "Chỉ còn đúng 1 ô trống toàn bãi (D-06)",
+      "description": "29/30 ô đã bị chiếm đóng, chỉ còn đúng 1 ô duy nhất D-06.",
+      "gate": {
+        "status": "ok",
+        "plate": "43A67890",
+        "type": "resident",
+        "building": "B",
+        "confidence": 0.91
+      },
+      "all_occupied_except": ["D-06"]
+    },
+    "resident_building_b": {
+      "name": "Cư dân Tòa B (51B56789)",
+      "description": "Xe cư dân Tòa B vào cổng, hệ thống cấp ô trống gần Thang máy B nhất.",
+      "gate": {
+        "status": "ok",
+        "plate": "51B56789",
+        "type": "resident",
+        "building": "B",
+        "confidence": 0.95
+      },
+      "occupied_slots": ["B-01", "B-03", "A-01", "C-02", "D-01"]
+    },
+    "ocr_unreadable": {
+      "name": "Lỗi OCR: Không đọc được biển số (PLATE_UNREADABLE)",
+      "description": "Biển số bị che khuất hoặc chụp mờ, hệ thống yêu cầu quét lại hoặc nhập tay.",
+      "gate": {
+        "status": "error",
+        "code": "PLATE_UNREADABLE",
+        "message": "Không đọc được biển số, vui lòng chụp lại"
+      }
+    },
+    "ocr_no_vehicle": {
+      "name": "Lỗi OCR: Không thấy xe (NO_VEHICLE)",
+      "description": "Ảnh chụp cổng trống, camera AI không phát hiện phương tiện.",
+      "gate": {
+        "status": "error",
+        "code": "NO_VEHICLE",
+        "message": "Không phát hiện xe trước rào chắn"
+      }
+    }
+  }
+}
