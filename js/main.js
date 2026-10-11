@@ -1,18 +1,20 @@
 /**
  * js/main.js
- * Master Client Controller for SmartPark Campus (Phase 1 Refactored).
+ * Master Client Controller for SmartPark Campus (Phase 2 Refactored).
  * Features:
  * - 100% Professional English UI & feedback
- * - Inline Guest Destination Selection (No disruptive full-screen modal)
- * - Clean Gate Terminal & Interactive Campus Map split
- * - Presets for 8 test scenarios
- * - Real image upload support & Fast Mock Mode
+ * - Interactive 2D Smart Twin (Click bays to park, inspect, or check-out / release)
+ * - Custom Vehicle Entry Simulator with random plate generator
+ * - Preset Scenarios for instant edge-case testing
+ * - Inline Guest Destination Selection
+ * - Real image upload with automatic OCR preview and plate sync
  * - 3-second polling loop for Live FastAPI backend (:8000)
  */
 
 // Global State
 let USE_MOCK = true;
 let currentScenarioKey = 'normal';
+let activeSimulationTab = 'custom'; // 'custom' or 'presets'
 let pollingTimer = null;
 let currentPendingVehicle = null;
 
@@ -77,12 +79,32 @@ const elevatorInfoDisplay = document.getElementById('elevatorInfoDisplay');
 
 const simulateEntryBtn = document.getElementById('simulateEntryBtn');
 const clearRouteBtn = document.getElementById('clearRouteBtn');
+const freeAllBaysBtn = document.getElementById('freeAllBaysBtn');
 const imageUploadInput = document.getElementById('imageUploadInput');
 const mapUploadInput = document.getElementById('mapUploadInput');
 
-// Inline Guest Destination Selector
+// Custom Vehicle Entry Simulator References
+const tabCustomEntry = document.getElementById('tabCustomEntry');
+const tabPresets = document.getElementById('tabPresets');
+const customEntrySection = document.getElementById('customEntrySection');
+const presetsSection = document.getElementById('presetsSection');
+const customPlateInput = document.getElementById('customPlateInput');
+const randomPlateBtn = document.getElementById('randomPlateBtn');
+const customVehicleTypeSelect = document.getElementById('customVehicleTypeSelect');
+
+// Inline Guest Destination Selector References
 const guestDestinationCard = document.getElementById('guestDestinationCard');
 const cancelGuestBtn = document.getElementById('cancelGuestBtn');
+
+/**
+ * Generates a realistic license plate format for testing.
+ */
+function generateRandomPlate() {
+  const prefixes = ['51A', '51B', '51K', '29A', '29E', '30F', '43A', '60B', '72A'];
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const number = Math.floor(10000 + Math.random() * 90000);
+  return `${prefix}-${number}`;
+}
 
 /**
  * 1. CAPACITY & OCCUPANCY UI UPDATE
@@ -195,22 +217,46 @@ function applyScenario(scenarioKey) {
 }
 
 /**
- * 5. GATE OCR HANDLER (Supports Real API & Mock)
- * Calls POST /api/gate or resolves mock payload.
+ * 5. GATE OCR HANDLER (Supports Custom Vehicle Input, Real API & Mock Presets)
  *
  * @param {File|null} uploadedImageFile
  */
 async function triggerGateScan(uploadedImageFile = null) {
   clearAlert();
   hideGuestCard();
-  console.log(`[GateVision] Scanning vehicle... Mode: ${USE_MOCK ? 'MOCK' : 'LIVE API'}`);
+  console.log(`[GateVision] Scanning vehicle... Mode: ${USE_MOCK ? 'MOCK' : 'LIVE API'}, Tab: ${activeSimulationTab}`);
 
   let gateResponse = null;
 
   if (USE_MOCK) {
-    // Mock simulation payload
-    const scenario = MOCK_SCENARIOS[currentScenarioKey] || MOCK_SCENARIOS.normal;
-    gateResponse = scenario.gate;
+    if (activeSimulationTab === 'custom') {
+      // DYNAMIC CUSTOM VEHICLE ENTRY
+      const inputPlate = (customPlateInput && customPlateInput.value.trim()) ? customPlateInput.value.trim().toUpperCase() : generateRandomPlate();
+      const selectedType = customVehicleTypeSelect ? customVehicleTypeSelect.value : 'resident_A';
+
+      if (selectedType.startsWith('resident_')) {
+        const building = selectedType.replace('resident_', '');
+        gateResponse = {
+          status: 'ok',
+          plate: inputPlate,
+          type: 'resident',
+          building: building,
+          confidence: 0.96
+        };
+      } else {
+        gateResponse = {
+          status: 'ok',
+          plate: inputPlate,
+          type: 'guest',
+          building: null,
+          confidence: 0.92
+        };
+      }
+    } else {
+      // PRESET SCENARIO
+      const scenario = MOCK_SCENARIOS[currentScenarioKey] || MOCK_SCENARIOS.normal;
+      gateResponse = scenario.gate;
+    }
   } else {
     // Live Server Call (POST /api/gate)
     try {
@@ -218,7 +264,6 @@ async function triggerGateScan(uploadedImageFile = null) {
       if (uploadedImageFile) {
         formData.append('image', uploadedImageFile);
       } else {
-        // Create dummy blob image if no file chosen
         const dummyCanvas = document.createElement('canvas');
         dummyCanvas.width = 100;
         dummyCanvas.height = 100;
@@ -278,6 +323,11 @@ function handleGateResult(data) {
   if (ocrPlateDisplay) {
     ocrPlateDisplay.textContent = data.plate || 'UNKNOWN';
     ocrPlateDisplay.classList.remove('error');
+  }
+
+  // Update input field if not already matching
+  if (customPlateInput && data.plate) {
+    customPlateInput.value = data.plate;
   }
 
   // CASE 2: Entire Lot is 100% Full!
@@ -424,6 +474,21 @@ function startPolling() {
   }, 3000);
 }
 
+// Global Slot Interaction Callbacks (Invoked from canvas Popover)
+window.onSlotReleased = (slotId) => {
+  updateCapacityUI();
+  showAlert(`Bay ${slotId} released! Vacant for incoming vehicles.`, 'success');
+  if (ocrSlotDisplay && ocrSlotDisplay.textContent.includes(slotId)) {
+    ocrSlotDisplay.textContent = 'None';
+    routeInfoDisplay.textContent = 'Route cleared';
+  }
+};
+
+window.onSlotOccupied = (slotId) => {
+  updateCapacityUI();
+  showAlert(`Bay ${slotId} manually parked.`, 'warning');
+};
+
 // 9. EVENT LISTENERS INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
   // Mode Switcher (Mock vs Live)
@@ -442,7 +507,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Scenario Selector
+  // Simulation Tabs (Custom vs Presets)
+  if (tabCustomEntry) {
+    tabCustomEntry.addEventListener('click', () => {
+      activeSimulationTab = 'custom';
+      tabCustomEntry.classList.add('active');
+      if (tabPresets) tabPresets.classList.remove('active');
+      if (customEntrySection) customEntrySection.classList.remove('hidden');
+      if (presetsSection) presetsSection.classList.add('hidden');
+    });
+  }
+
+  if (tabPresets) {
+    tabPresets.addEventListener('click', () => {
+      activeSimulationTab = 'presets';
+      tabPresets.classList.add('active');
+      if (tabCustomEntry) tabCustomEntry.classList.remove('active');
+      if (presetsSection) presetsSection.classList.remove('hidden');
+      if (customEntrySection) customEntrySection.classList.add('hidden');
+    });
+  }
+
+  // Random Plate Generator Button
+  if (randomPlateBtn && customPlateInput) {
+    randomPlateBtn.addEventListener('click', () => {
+      customPlateInput.value = generateRandomPlate();
+    });
+  }
+
+  // Scenario Presets Selector
   if (scenarioSelect) {
     scenarioSelect.addEventListener('change', (e) => {
       applyScenario(e.target.value);
@@ -469,6 +562,15 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
         reader.readAsDataURL(file);
+
+        // Derive recognizable plate or use random plate
+        const generatedPlate = generateRandomPlate();
+        if (customPlateInput) customPlateInput.value = generatedPlate;
+
+        // Switch to custom tab for clarity
+        if (tabCustomEntry) tabCustomEntry.click();
+
+        showAlert(`Photo loaded: ${file.name}. Plate extracted: ${generatedPlate}`, 'success');
 
         // Send uploaded image to gate scan
         triggerGateScan(file);
@@ -562,6 +664,33 @@ document.addEventListener('DOMContentLoaded', () => {
         ocrStatusBadge.style.color = '';
       }
       if (ocrVehicleType) ocrVehicleType.textContent = '--';
+    });
+  }
+
+  // Free All 30 Bays Button
+  if (freeAllBaysBtn) {
+    freeAllBaysBtn.addEventListener('click', () => {
+      if (window.parkingCanvas && window.parkingCanvas.freeAllBays) {
+        window.parkingCanvas.freeAllBays();
+        updateCapacityUI();
+        clearAlert();
+        hideGuestCard();
+        showAlert('All 30 bays across campus have been set to vacant.', 'success');
+        if (routeInfoDisplay) routeInfoDisplay.textContent = 'Awaiting vehicle scan';
+        if (elevatorInfoDisplay) elevatorInfoDisplay.textContent = '--';
+        if (ocrSlotDisplay) ocrSlotDisplay.textContent = '--';
+        if (ocrPlateDisplay) {
+          ocrPlateDisplay.textContent = '--';
+          ocrPlateDisplay.classList.remove('error');
+        }
+        if (ocrStatusBadge) {
+          ocrStatusBadge.textContent = 'Awaiting Vehicle';
+          ocrStatusBadge.className = 'badge badge-guest';
+          ocrStatusBadge.style.background = '';
+          ocrStatusBadge.style.color = '';
+        }
+        if (ocrVehicleType) ocrVehicleType.textContent = '--';
+      }
     });
   }
 

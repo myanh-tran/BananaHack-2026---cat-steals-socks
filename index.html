@@ -126,12 +126,32 @@
         </div>
       </div>
 
-      <!-- Quick Test Presets (Scenario Selector) -->
-      <div class="control-section">
-        <span class="control-label">
-          <span>🎯 Quick Test Scenarios</span>
-          <span style="color: #38bdf8; font-size: 0.7rem; font-weight: 500;">Preset Demo</span>
-        </span>
+      <!-- Entry Simulation Modes (Custom vs Presets) -->
+      <div class="simulation-tabs">
+        <button type="button" class="tab-btn active" id="tabCustomEntry">Custom Vehicle</button>
+        <button type="button" class="tab-btn" id="tabPresets">Preset Demos</button>
+      </div>
+
+      <!-- Mode 1: Custom Vehicle Form (Active by default) -->
+      <div id="customEntrySection" class="control-section">
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="text" id="customPlateInput" class="input-control" value="51A-88888" placeholder="Enter license plate..." style="flex: 1; font-weight: 600; letter-spacing: 0.05em;">
+          <button type="button" id="randomPlateBtn" class="btn btn-secondary btn-sm" title="Generate random license plate">
+            🎲 Random
+          </button>
+        </div>
+
+        <select id="customVehicleTypeSelect" class="select-control">
+          <option value="resident_A">Resident — Building A (Elevator A)</option>
+          <option value="resident_B">Resident — Building B (Elevator B)</option>
+          <option value="resident_C">Resident — Building C (Elevator C)</option>
+          <option value="resident_D">Resident — Building D (Elevator D)</option>
+          <option value="guest">Guest Visitor (Zone G or Nearest)</option>
+        </select>
+      </div>
+
+      <!-- Mode 2: Preset Scenarios (Hidden by default) -->
+      <div id="presetsSection" class="control-section hidden">
         <select id="scenarioSelect" class="select-control">
           <option value="normal">1. Normal (Ample bays available across all zones)</option>
           <option value="zone_a_full">2. Building A 100% Full (Auto overflow re-routing)</option>
@@ -164,6 +184,7 @@
         <div class="panel-title-text" id="parking-map-title">
           <span>🗺️</span>
           <span>Campus 2D Navigation Map (30 Bays)</span>
+          <span style="font-size: 0.72rem; color: #94a3b8; font-weight: normal; margin-left: 0.5rem;">(Click bay to inspect / check-out)</span>
         </div>
         
         <!-- Map Panel Toolbar -->
@@ -171,8 +192,11 @@
           <button id="clearRouteBtn" class="btn btn-secondary btn-sm" title="Clear current route and release reservation">
             🔄 Reset Route
           </button>
+          <button id="freeAllBaysBtn" class="btn btn-secondary btn-sm" title="Mark all 30 bays as vacant">
+            🧹 Free All
+          </button>
           <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer;" title="Load campus map configuration from JSON file">
-            🗺️ Load Map JSON
+            🗺️ Load Blueprint
             <input type="file" id="mapUploadInput" accept=".json,application/json" class="file-input">
           </label>
         </div>
@@ -182,7 +206,7 @@
       <div class="map-stats">
         <div class="stat-item">
           <span class="stat-indicator free"></span>
-          <span>Free (Available)</span>
+          <span>Free (Click to park)</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator reserved"></span>
@@ -190,7 +214,7 @@
         </div>
         <div class="stat-item">
           <span class="stat-indicator occupied"></span>
-          <span>Occupied</span>
+          <span>Occupied (Click to release)</span>
         </div>
         <div class="stat-item">
           <span class="stat-indicator path"></span>
@@ -206,9 +230,39 @@
         </div>
       </div>
 
-      <!-- Canvas Wrapper -->
-      <div class="canvas-wrapper">
+      <!-- Canvas Wrapper with Interactive Popover -->
+      <div class="canvas-wrapper" id="canvasWrapper">
         <canvas id="parkingMap" width="840" height="620" aria-label="Interactive 2D Campus Parking Map"></canvas>
+
+        <!-- Floating Bay Inspector Popover (Revealed on Bay Click) -->
+        <div id="bayInspectorPopover" class="bay-inspector hidden">
+          <div class="bay-inspector-header">
+            <div class="bay-inspector-title">
+              <span id="popoverBayIcon">🅿️</span>
+              <span id="popoverBayId">Bay A-01</span>
+            </div>
+            <button type="button" id="popoverCloseBtn" class="bay-inspector-close" title="Close inspector">✕</button>
+          </div>
+          <div class="bay-inspector-body">
+            <div class="bay-inspector-row">
+              <span>Zone:</span>
+              <strong id="popoverBayZone">Building A</strong>
+            </div>
+            <div class="bay-inspector-row">
+              <span>Status:</span>
+              <span id="popoverBayBadge" class="badge">FREE</span>
+            </div>
+            <div class="bay-inspector-row">
+              <span>Plate:</span>
+              <strong id="popoverBayPlate">--</strong>
+            </div>
+          </div>
+          <div class="bay-inspector-actions">
+            <button type="button" id="popoverToggleBtn" class="btn btn-sm btn-primary" style="flex: 1;">
+              🚗 Park Vehicle
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 

@@ -192,14 +192,14 @@ function reserveSlot(slotId, plateNumber = '') {
     target.occupied = true; // Counted as unavailable
     target.reservedPlate = plateNumber;
     console.log(`[ParkingManager] Slot ${slotId} is now RESERVED for ${plateNumber}`);
-    initParkingMap();
+    redrawCurrentMap();
     return true;
   }
   return false;
 }
 
 /**
- * Releases a reserved slot back to free state if cancelled.
+ * Releases a reserved or occupied slot back to free state (Vehicle Check-Out).
  */
 function releaseSlot(slotId) {
   const target = activeParkingSlots.find((s) => s.id === slotId);
@@ -207,8 +207,47 @@ function releaseSlot(slotId) {
     target.isReserved = false;
     target.occupied = false;
     target.reservedPlate = null;
-    initParkingMap();
+    target.parkedPlate = null;
+    console.log(`[ParkingManager] Slot ${slotId} released back to FREE`);
+    redrawCurrentMap();
+    return true;
   }
+  return false;
+}
+
+/**
+ * Manually marks a slot as occupied.
+ */
+function occupySlot(slotId, plateNumber = 'MANUAL-PARK') {
+  const target = activeParkingSlots.find((s) => s.id === slotId);
+  if (target) {
+    target.isReserved = false;
+    target.occupied = true;
+    target.parkedPlate = plateNumber;
+    target.reservedPlate = null;
+    console.log(`[ParkingManager] Slot ${slotId} occupied by ${plateNumber}`);
+    redrawCurrentMap();
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Frees all 30 parking bays across campus.
+ */
+function freeAllBays() {
+  activeParkingSlots.forEach((s) => {
+    s.isReserved = false;
+    s.occupied = false;
+    s.reservedPlate = null;
+    s.parkedPlate = null;
+  });
+  currentDrawnPath = null;
+  currentWalkingInfo = null;
+  selectedSlot = null;
+  hideBayInspector();
+  redrawCurrentMap();
+  console.log('[ParkingManager] All 30 bays freed.');
 }
 
 /**
@@ -753,8 +792,50 @@ function drawFullLotNotice() {
   ctx.restore();
 }
 
+// Interactive Selection State
+let hoveredSlot = null;
+let selectedSlot = null;
+let currentDrawnPath = null;
+let currentWalkingInfo = null;
+
+// DOM Inspector Elements
+let bayInspectorPopover = null;
+let popoverBayId = null;
+let popoverBayZone = null;
+let popoverBayBadge = null;
+let popoverBayPlate = null;
+let popoverToggleBtn = null;
+let popoverCloseBtn = null;
+
 /**
- * Draws all 30 parking slots supporting FREE, OCCUPIED, and RESERVED states.
+ * Finds a parking slot under the given pixel coordinate.
+ */
+function getSlotAtPixel(px, py) {
+  return activeParkingSlots.find((slot) => {
+    const minX = slot.coordinates[0][0];
+    const maxX = slot.coordinates[1][0];
+    const minY = slot.coordinates[0][1];
+    const maxY = slot.coordinates[2][1];
+    return px >= minX && px <= maxX && py >= minY && py <= maxY;
+  }) || null;
+}
+
+/**
+ * Converts mouse event coordinates to canvas resolution space (840x620).
+ */
+function getCanvasCoords(event) {
+  if (!canvas) return { x: 0, y: 0 };
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY
+  };
+}
+
+/**
+ * Draws all 30 parking slots supporting FREE, OCCUPIED, and RESERVED states with interactive highlights.
  */
 function drawSlots(slots = activeParkingSlots) {
   if (!ctx) return;
@@ -770,23 +851,30 @@ function drawSlots(slots = activeParkingSlots) {
     }
     ctx.closePath();
 
+    const isHovered = (hoveredSlot && hoveredSlot.id === slot.id);
+    const isSelected = (selectedSlot && selectedSlot.id === slot.id);
+
     if (slot.isReserved) {
       // Amber/Gold for RESERVED
       ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2.5;
-      ctx.shadowColor = 'rgba(245, 158, 11, 0.5)';
-      ctx.shadowBlur = 8;
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#fbbf24' : '#f59e0b';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2.5;
+      ctx.shadowColor = 'rgba(245, 158, 11, 0.6)';
+      ctx.shadowBlur = isHovered || isSelected ? 12 : 8;
     } else if (slot.occupied) {
       // Red for OCCUPIED
       ctx.fillStyle = 'rgba(239, 68, 68, 0.28)';
-      ctx.strokeStyle = '#ef4444';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#fca5a5' : '#ef4444';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2;
+      ctx.shadowColor = isHovered || isSelected ? 'rgba(239, 68, 68, 0.6)' : 'transparent';
+      ctx.shadowBlur = isHovered || isSelected ? 10 : 0;
     } else {
       // Green for FREE
-      ctx.fillStyle = 'rgba(34, 197, 94, 0.28)';
-      ctx.strokeStyle = '#22c55e';
-      ctx.lineWidth = 2;
+      ctx.fillStyle = isHovered ? 'rgba(34, 197, 94, 0.42)' : 'rgba(34, 197, 94, 0.28)';
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#86efac' : '#22c55e';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2;
+      ctx.shadowColor = isHovered || isSelected ? 'rgba(34, 197, 94, 0.6)' : 'transparent';
+      ctx.shadowBlur = isHovered || isSelected ? 10 : 0;
     }
 
     ctx.fill();
@@ -813,20 +901,22 @@ function drawSlots(slots = activeParkingSlots) {
       ctx.fillText('FREE', slot.center[0], slot.center[1] + 9);
     }
 
+    // Outer subtle focus outline on hover
+    if (isHovered && !isSelected) {
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(slot.coordinates[0][0] - 2, slot.coordinates[0][1] - 2, slot.width + 4, slot.height + 4);
+    }
+
     ctx.restore();
   });
 }
 
 /**
- * Draws the routing paths:
- * 1. Vehicle A* path (Yellow glowing stroke)
- * 2. Pedestrian Walking path (Dotted cyan stroke)
+ * Draws the vehicular path and pedestrian walking line on top of map.
  */
-function drawRoutingPath(pathCoords, walkingInfo = null) {
+function drawPathOnly(pathCoords, walkingInfo = null) {
   if (!ctx || !pathCoords || pathCoords.length < 2) return;
-
-  drawMapEnvironment();
-  drawSlots(activeParkingSlots);
 
   ctx.save();
 
@@ -901,17 +991,105 @@ function drawRoutingPath(pathCoords, walkingInfo = null) {
 }
 
 /**
- * Initializes/Redraws the map.
+ * Saves and draws the active routing path.
  */
-function initParkingMap() {
-  if (!ctx || !canvas) return;
-  drawMapEnvironment();
-  drawSlots(activeParkingSlots);
+function drawRoutingPath(pathCoords, walkingInfo = null) {
+  currentDrawnPath = pathCoords;
+  currentWalkingInfo = walkingInfo;
+  redrawCurrentMap();
 }
 
 /**
- * Loads campus map configuration schema dynamically (from parking_map.json or admin upload).
- * @param {Object} config - Blueprint JSON schema
+ * Redraws current map including active route if present.
+ */
+function redrawCurrentMap() {
+  if (!ctx || !canvas) return;
+  drawMapEnvironment();
+  drawSlots(activeParkingSlots);
+  if (currentDrawnPath && currentDrawnPath.length >= 2) {
+    drawPathOnly(currentDrawnPath, currentWalkingInfo);
+  }
+}
+
+/**
+ * Resets path and redraws baseline map.
+ */
+function initParkingMap() {
+  if (!ctx || !canvas) return;
+  currentDrawnPath = null;
+  currentWalkingInfo = null;
+  selectedSlot = null;
+  hideBayInspector();
+  redrawCurrentMap();
+}
+
+/**
+ * Displays floating bay inspector popover.
+ */
+function showBayInspector(slot) {
+  if (!bayInspectorPopover || !canvas) return;
+
+  popoverBayId.textContent = `Bay ${slot.id}`;
+  popoverBayZone.textContent = slot.zoneName || `Zone ${slot.zone}`;
+
+  if (slot.isReserved) {
+    popoverBayBadge.textContent = 'RESERVED';
+    popoverBayBadge.className = 'badge badge-guest';
+    popoverBayBadge.style.background = '';
+    popoverBayBadge.style.color = '';
+    popoverBayPlate.textContent = slot.reservedPlate || 'Assigned';
+    popoverToggleBtn.textContent = '🚪 Release Bay (Check-Out)';
+    popoverToggleBtn.className = 'btn btn-sm btn-danger';
+  } else if (slot.occupied) {
+    popoverBayBadge.textContent = 'OCCUPIED';
+    popoverBayBadge.className = 'badge';
+    popoverBayBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+    popoverBayBadge.style.color = '#f87171';
+    popoverBayPlate.textContent = slot.parkedPlate || slot.reservedPlate || 'Parked Vehicle';
+    popoverToggleBtn.textContent = '🚪 Release Bay (Check-Out)';
+    popoverToggleBtn.className = 'btn btn-sm btn-danger';
+  } else {
+    popoverBayBadge.textContent = 'FREE';
+    popoverBayBadge.className = 'badge';
+    popoverBayBadge.style.background = 'rgba(34, 197, 94, 0.2)';
+    popoverBayBadge.style.color = '#86efac';
+    popoverBayPlate.textContent = 'None';
+    popoverToggleBtn.textContent = '🚗 Park Vehicle Here';
+    popoverToggleBtn.className = 'btn btn-sm btn-success';
+  }
+
+  // Position relative to canvasWrapper
+  const wrapper = document.getElementById('canvasWrapper');
+  const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : canvas.getBoundingClientRect();
+  const canvasRect = canvas.getBoundingClientRect();
+
+  const slotScreenX = (slot.center[0] / canvas.width) * canvasRect.width + (canvasRect.left - wrapperRect.left);
+  const slotScreenY = (slot.center[1] / canvas.height) * canvasRect.height + (canvasRect.top - wrapperRect.top);
+
+  let popoverX = slotScreenX + 25;
+  let popoverY = slotScreenY - 60;
+
+  if (popoverX + 260 > wrapperRect.width) {
+    popoverX = slotScreenX - 275;
+  }
+  if (popoverY < 10) popoverY = 10;
+
+  bayInspectorPopover.style.left = `${Math.max(10, Math.round(popoverX))}px`;
+  bayInspectorPopover.style.top = `${Math.max(10, Math.round(popoverY))}px`;
+  bayInspectorPopover.classList.remove('hidden');
+}
+
+/**
+ * Hides floating bay inspector.
+ */
+function hideBayInspector() {
+  if (bayInspectorPopover) {
+    bayInspectorPopover.classList.add('hidden');
+  }
+}
+
+/**
+ * Loads campus map configuration schema dynamically.
  */
 function loadParkingMapConfig(config) {
   if (!config) return false;
@@ -951,6 +1129,9 @@ window.parkingCanvas = {
   updateSlotOccupancy,
   reserveSlot,
   releaseSlot,
+  occupySlot,
+  freeAllBays,
+  getSlotAtPixel,
   isParkingLotFull,
   getParkingStats,
   assignOptimalParkingSlot,
@@ -958,15 +1139,91 @@ window.parkingCanvas = {
   drawSlots,
   drawRoutingPath,
   drawMapEnvironment,
-  initParkingMap
+  redrawCurrentMap,
+  initParkingMap,
+  showBayInspector,
+  hideBayInspector
 };
 
 window.assignOptimalParkingSlot = assignOptimalParkingSlot;
 window.reserveSlot = reserveSlot;
+window.releaseSlot = releaseSlot;
+window.occupySlot = occupySlot;
+window.freeAllBays = freeAllBays;
 window.findAStarPath = findAStarPath;
 window.drawRoutingPath = drawRoutingPath;
 window.loadParkingMapConfig = loadParkingMapConfig;
 
+// Setup interactive canvas events
 document.addEventListener('DOMContentLoaded', () => {
+  bayInspectorPopover = document.getElementById('bayInspectorPopover');
+  popoverBayId = document.getElementById('popoverBayId');
+  popoverBayZone = document.getElementById('popoverBayZone');
+  popoverBayBadge = document.getElementById('popoverBayBadge');
+  popoverBayPlate = document.getElementById('popoverBayPlate');
+  popoverToggleBtn = document.getElementById('popoverToggleBtn');
+  popoverCloseBtn = document.getElementById('popoverCloseBtn');
+
+  if (canvas) {
+    canvas.addEventListener('mousemove', (e) => {
+      const { x, y } = getCanvasCoords(e);
+      const slot = getSlotAtPixel(x, y);
+      if (slot !== hoveredSlot) {
+        hoveredSlot = slot;
+        canvas.style.cursor = slot ? 'pointer' : 'default';
+        redrawCurrentMap();
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      if (hoveredSlot) {
+        hoveredSlot = null;
+        canvas.style.cursor = 'default';
+        redrawCurrentMap();
+      }
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const { x, y } = getCanvasCoords(e);
+      const slot = getSlotAtPixel(x, y);
+      if (slot) {
+        selectedSlot = slot;
+        redrawCurrentMap();
+        showBayInspector(slot);
+      } else {
+        selectedSlot = null;
+        redrawCurrentMap();
+        hideBayInspector();
+      }
+    });
+  }
+
+  if (popoverCloseBtn) {
+    popoverCloseBtn.addEventListener('click', () => {
+      selectedSlot = null;
+      hideBayInspector();
+      redrawCurrentMap();
+    });
+  }
+
+  if (popoverToggleBtn) {
+    popoverToggleBtn.addEventListener('click', () => {
+      if (!selectedSlot) return;
+      const targetSlot = selectedSlot;
+      if (targetSlot.occupied || targetSlot.isReserved) {
+        releaseSlot(targetSlot.id);
+        if (typeof window.onSlotReleased === 'function') {
+          window.onSlotReleased(targetSlot.id);
+        }
+      } else {
+        occupySlot(targetSlot.id, 'MANUAL-PARK');
+        if (typeof window.onSlotOccupied === 'function') {
+          window.onSlotOccupied(targetSlot.id);
+        }
+      }
+      showBayInspector(targetSlot);
+    });
+  }
+
   initParkingMap();
 });

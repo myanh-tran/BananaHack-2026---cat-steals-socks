@@ -118,7 +118,7 @@ flowchart TD
     Phase1 --> Phase2 --> Phase3
 ```
 
-### Giai đoạn 1: Thiết kế lại Layout & Trải nghiệm (UX/UI Refactor)
+### Giai đoạn 1: Thiết kế lại Layout & Trải nghiệm (UX/UI Refactor) - [COMPLETED]
 1. **Tổ chức lại phân vùng màn hình:**
    - **Thanh Header:** Hiển thị tên hệ thống, trạng thái kết nối Backend, thanh tiến trình sức chứa bãi xe (`Available: X/30`).
    - **Cột trái - Trạm kiểm soát Cổng (Gate Terminal):**
@@ -131,25 +131,28 @@ flowchart TD
 2. **Loại bỏ Guest Modal khó chịu:**
    - Khi phát hiện xe khách, hiển thị ngay 4 nút bấm chọn đích đến (`Tòa A`, `Tòa B`, `Tòa C`, `Tòa D`) ngay trong bảng điều khiển dưới camera.
 3. **Chuẩn hóa ngôn ngữ:**
-   - Sử dụng tiếng Việt rõ ràng, dễ hiểu, kết hợp các thuật ngữ kỹ thuật tiêu chuẩn (ví dụ: *Thuật toán tìm đường A\**, *Nhận diện biển số AI OCR*).
+   - Chuyển đổi 100% giao diện, nhãn, thông báo và kịch bản sang tiếng Anh chuẩn theo yêu cầu người dùng.
 
-### Giai đoạn 2: Xóa bỏ Hardcode – Biến thành Interactive Smart Twin
+### Giai đoạn 2: Xóa bỏ Hardcode – Biến thành Interactive Smart Twin - [COMPLETED]
 1. **Tương tác trực tiếp trên Map Canvas (`js/canvas.js`):**
    - Bắt sự kiện chuột `mousemove` và `click`:
-     - **Hover:** Highlight viền ô đỗ và hiển thị tooltip thông tin chi tiết (Mã ô, Phân khu, Loại xe, Trạng thái, Biển số nếu có).
-     - **Click vào ô trống:** Chuyển ngay thành ô đang đỗ (Occupied).
-     - **Click vào ô đang đỗ:** Mở menu nhỏ với nút *"🚗 Cho xe này rời bãi (Trả ô)"* $\to$ Ô trở lại trạng thái Trống (Free).
+     - **Hover:** Highlight viền ô đỗ phát sáng neon (`#38bdf8`) và đổi con trỏ chuột sang `pointer`.
+     - **Click vào ô:** Mở cửa sổ nổi **Bay Inspector Popover** hiển thị mã ô, phân khu, trạng thái, biển số xe.
+     - **Click ô trống:** Nút *"🚗 Park Vehicle Here"* $\to$ chuyển thành Occupied ngay trên bản đồ.
+     - **Click ô có xe (Occupied/Reserved):** Nút *"🚪 Release Bay (Check-Out)"* $\to$ trả ô về trạng thái Free, cập nhật sức chứa.
+     - **Thanh công cụ:** Bổ sung nút *"🧹 Free All"* để nhanh chóng đưa cả 30 ô về trạng thái trống khi kiểm thử.
 2. **Bộ điều khiển xe vào cổng linh hoạt (`js/main.js`):**
-   - Cung cấp form nhập:
-     - Biển số xe: Người dùng có thể tự gõ (hoặc ấn nút *"🎲 Biển ngẫu nhiên"*).
-     - Loại đối tượng: Cư dân Tòa A / B / C / D hoặc Khách vãng lai.
-     - Nút *"🚗 Xác nhận vào cổng"*: Hệ thống tính toán ô tối ưu theo đúng hiện trạng bãi xe thực tế tại thời điểm bấm, không phụ thuộc kịch bản cố định.
+   - Hỗ trợ 2 tab chuyển đổi: **Custom Vehicle** (Mặc định) và **Preset Demos**.
+   - Tab Custom Vehicle:
+     - Biển số xe: Tự do nhập biển số bất kỳ + Nút *"🎲 Random"* sinh biển số ngẫu nhiên.
+     - Chọn đối tượng: Cư dân Tòa A / B / C / D hoặc Khách vãng lai.
+     - Nút *"🚗 Scan Vehicle Entry"*: Hệ thống tính toán ô tối ưu theo đúng hiện trạng bãi xe thực tế tại thời điểm bấm!
 3. **Nâng cấp tính năng Tải ảnh xe thật:**
-   - Khi tải ảnh lên, hiển thị ảnh trong camera và cho phép người dùng xem/sửa biển số nhận diện được trước khi bấm cấp ô.
+   - Hiển thị ảnh trong camera, tự động trích xuất/gán biển số vào ô nhập, chuyển ngay sang tab Custom để người dùng duyệt và quét xe.
 4. **Giữ các kịch bản mẫu làm Quick Presets:**
-   - 8 kịch bản chỉ đóng vai trò là "Nạp nhanh bối cảnh" để người dùng không phải click thủ công từng ô khi muốn thử các trường hợp đặc biệt (như Bãi đầy 100%, Tòa A đầy...).
+   - Tab Presets giữ nguyên 8 kịch bản để nạp nhanh bối cảnh khi cần trình diễn các case đặc thù.
 
-### Giai đoạn 3: Trực quan hóa sinh động (Animation & Lifecycle)
+### Giai đoạn 3: Trực quan hóa sinh động (Animation & Lifecycle) - [PENDING]
 1. **Hoạt ảnh xe ô tô di chuyển (Car Driving Animation):**
    - Khi thuật toán A\* sinh ra đường đi, một biểu tượng xe ô tô nhỏ sẽ chuyển động mượt dọc theo đường màu vàng từ Cổng tới ô đỗ.
    - Khi xe tới nơi, ô đỗ tự động chuyển từ trạng thái `RESERVED` (vàng) sang `OCCUPIED` (đỏ).
