@@ -295,33 +295,71 @@ async function triggerGateScan(uploadedImageFile = null) {
       gateResponse = scenario.gate;
     }
   } else {
-    // Live Server Call (POST /api/gate)
+    // ── Live FastAPI Backend Call ─────────────────────────────────────────────
+    // Two endpoints (match backend/app.py):
+    //   POST /api/gate/scan         → multipart image upload → AI pipeline
+    //   POST /api/gate/scan/plate   → JSON plate string      → DB lookup only
     try {
-      const formData = new FormData();
+      let apiData;
+
       if (uploadedImageFile) {
-        formData.append('image', uploadedImageFile);
+        // ── Path A: Real image → full YOLO+OCR+DB pipeline ──────────────────
+        const formData = new FormData();
+        formData.append('file', uploadedImageFile); // Backend expects field: 'file'
+
+        const res = await fetch('http://localhost:8000/api/gate/scan', {
+          method: 'POST',
+          body: formData
+        });
+        if (!res.ok) throw new Error(`Server HTTP ${res.status}`);
+        apiData = await res.json();
       } else {
-        const dummyCanvas = document.createElement('canvas');
-        dummyCanvas.width = 100;
-        dummyCanvas.height = 100;
-        const blob = await new Promise((res) => dummyCanvas.toBlob(res, 'image/jpeg'));
-        formData.append('image', blob, 'sample_car.jpg');
+        // ── Path B: Manual plate text → DB lookup only (no OCR needed) ───────
+        const manualPlate = (customPlateInput && customPlateInput.value.trim())
+          ? customPlateInput.value.trim().toUpperCase()
+          : '';
+
+        if (!manualPlate) {
+          // Nothing to send: fallback to random mock for demo
+          gateResponse = { status: 'ok', plate: generateRandomPlate(), type: 'guest', building: null, confidence: 0.80 };
+          handleGateResult(gateResponse);
+          return;
+        }
+
+        const res = await fetch('http://localhost:8000/api/gate/scan/plate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plate: manualPlate })
+        });
+        if (!res.ok) throw new Error(`Server HTTP ${res.status}`);
+        apiData = await res.json();
       }
 
-      const res = await fetch('http://localhost:8000/api/gate', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server returned HTTP ${res.status}`);
+      // ── Normalize API response → internal gate schema ─────────────────────
+      // Backend returns: { license_plate, confidence, is_resident, resident_name, building, error }
+      // Internal schema: { status, plate, type, building, confidence }
+      if (apiData.error) {
+        gateResponse = {
+          status: 'error',
+          code: 'PLATE_UNREADABLE',
+          message: apiData.error
+        };
+      } else {
+        gateResponse = {
+          status: 'ok',
+          plate: apiData.license_plate || '',
+          type: apiData.is_resident ? 'resident' : 'guest',
+          building: apiData.building || null,
+          confidence: apiData.confidence || 0,
+          resident_name: apiData.resident_name || null  // Extra: display name in UI
+        };
       }
 
-      gateResponse = await res.json();
     } catch (err) {
       console.error('[GateAPI Error]', err);
-      showAlert(`Backend connection error: ${err.message}. Switched to Mock mode.`, 'warning');
-      gateResponse = MOCK_SCENARIOS.normal.gate;
+      showAlert(`Backend connection error: ${err.message}. Switched to Mock mode automatically.`, 'warning');
+      // Graceful degradation: fall back to mock preset so demo doesn't break
+      gateResponse = MOCK_SCENARIOS[currentScenarioKey]?.gate || MOCK_SCENARIOS.normal.gate;
     }
   }
 
@@ -396,7 +434,9 @@ function handleGateResult(data) {
       ocrStatusBadge.style.background = '';
       ocrStatusBadge.style.color = '';
     }
-    if (ocrVehicleType) ocrVehicleType.textContent = `Resident (Building ${data.building})`;
+    // Show resident name from DB if available (Live mode only)
+    const nameLabel = data.resident_name ? ` — ${data.resident_name}` : '';
+    if (ocrVehicleType) ocrVehicleType.textContent = `Resident · Bldg ${data.building}${nameLabel}`;
 
     currentPendingVehicle = data;
     allocateSlotAndRoute({
@@ -510,11 +550,17 @@ function startPolling() {
     if (USE_MOCK) return;
 
     try {
-      // 1. Health check
+      // 1. Health check — GET /api/health
       const healthRes = await fetch('http://localhost:8000/api/health');
       if (healthRes.ok) {
-        if (serverStatusDot) serverStatusDot.style.backgroundColor = '#22c55e';
-        if (serverStatusText) serverStatusText.textContent = 'Server 8000: ONLINE (Model Ready)';
+        const healthData = await healthRes.json();
+        const modelReady = healthData.pipeline_ready;
+        if (serverStatusDot) serverStatusDot.style.backgroundColor = modelReady ? '#22c55e' : '#f59e0b';
+        if (serverStatusText) {
+          serverStatusText.textContent = modelReady
+            ? 'Server 8000: ONLINE — AI Models Ready ✓'
+            : 'Server 8000: ONLINE — Models loading… (degraded)';
+        }
       }
 
       // 2. Slots fetch
@@ -614,27 +660,33 @@ document.addEventListener('DOMContentLoaded', () => {
   if (imageUploadInput) {
     imageUploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (cameraPreviewImg) {
-            cameraPreviewImg.src = event.target.result;
-            cameraPreviewImg.style.display = 'block';
-          }
-        };
-        reader.readAsDataURL(file);
+      if (!file) return;
 
-        // Derive recognizable plate or use random plate
+      // Always show image preview in camera feed
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (cameraPreviewImg) {
+          cameraPreviewImg.src = event.target.result;
+          cameraPreviewImg.style.display = 'block';
+        }
+      };
+      reader.readAsDataURL(file);
+
+      // Switch to Custom tab so user can see the result
+      if (tabCustomEntry) tabCustomEntry.click();
+
+      if (!USE_MOCK) {
+        // ── LIVE MODE: send image to backend AI pipeline ─────────────────────
+        // The API returns the real OCR'd plate; plate input will be auto-filled
+        // by handleGateResult() via the 'plate' field in the normalized response.
+        showAlert(`📷 Sending ${file.name} to AI backend…`, 'warning');
+        triggerGateScan(file);
+      } else {
+        // ── MOCK MODE: show preview and populate plate field for manual review ─
         const generatedPlate = generateRandomPlate();
         if (customPlateInput) customPlateInput.value = generatedPlate;
-
-        // Switch to custom tab for clarity
-        if (tabCustomEntry) tabCustomEntry.click();
-
-        showAlert(`Photo loaded: ${file.name}. Plate extracted: ${generatedPlate}`, 'success');
-
-        // Send uploaded image to gate scan
-        triggerGateScan(file);
+        showAlert(`Photo loaded: ${file.name}. In Mock mode — edit plate if needed, then click Scan Entry.`, 'warning');
+        // Do NOT auto-trigger scan; let user confirm the plate first
       }
     });
   }
