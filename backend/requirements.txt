@@ -12,10 +12,10 @@ uvicorn[standard]>=0.29.0
 python-multipart>=0.0.9     # Required for file upload (UploadFile)
 
 # ── AI / CV ─────────────────────────────────────────────────
-paddlepaddle>=3.0.0         # PaddlePaddle CPU (no GPU required)
+paddlepaddle
 paddleocr>=2.9.0            # PaddleOCR wrapper
 ultralytics>=8.2.0          # YOLOv8 (best.pt)
-opencv-python>=4.9.0        # Image decoding (or opencv-python-headless on servers)
+opencv-python-headless>=4.9.0 # Headless OpenCV for server/docker
 
 # ── Utilities ────────────────────────────────────────────────
 numpy>=1.26.0

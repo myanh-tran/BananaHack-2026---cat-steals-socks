@@ -1,0 +1,14 @@
+services:
+  smartpark-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smartpark-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code so edits reload automatically
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
