@@ -20,10 +20,9 @@ import networkx as nx
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# 1. Paths and setup
-# ---------------------------------------------------------------------------
 DATA_ROOT = Path("/content/PKLot/PKLot/UFPR04/Sunny")
-MODEL_PATH = Path("/content/drive/MyDrive/parking_project/best.pt")
+LOCAL_MODEL = Path(__file__).parent / "backend" / "models" / "occupancy_yolo.pt"
+MODEL_PATH = LOCAL_MODEL if LOCAL_MODEL.is_file() else Path("/content/drive/MyDrive/parking_project/best.pt")
 OUTPUT_DIR = Path("/content/drive/MyDrive/parking_project")
 
 CLASS_NAMES = {0: "occupied", 1: "empty"}
