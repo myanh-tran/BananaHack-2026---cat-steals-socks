@@ -56,13 +56,15 @@ app.add_middleware(
 
 # ── Load pipelines at startup ──────────────────────────────────────────────────
 # 1. Gate License Plate Pipeline (Person 1)
+_pipeline_error = None
 try:
     pipeline = PlatePipeline(
         yolo_path=str(YOLO_PLATE_PATH),
         ocr_model_dir=str(OCR_DIR),
     )
-    _pipeline_ready = True
+    _pipeline_ready = pipeline.is_ready()
 except Exception as e:
+    _pipeline_error = str(e)
     print(f"[WARNING] Could not load Plate AI models: {e}")
     pipeline = None
     _pipeline_ready = False
@@ -119,6 +121,7 @@ def health_check():
         "status": "ok",
         "pipeline_ready": _pipeline_ready,
         "gate_model_ready": _pipeline_ready,
+        "gate_error": _pipeline_error,
         "lot_model_ready": _lot_pipeline_ready,
         "models": {
             "plate_yolo":     str(YOLO_PLATE_PATH),
@@ -135,14 +138,11 @@ async def scan_from_image(file: UploadFile = File(...)):
 
     - Accepts: multipart/form-data with field name `file`
     - Returns: GateScanResponse JSON
-
-    Flow:
-        Image → YOLO detect plate → OCR read text → fuzzy match DB
     """
-    if not _pipeline_ready:
+    if pipeline is None:
         raise HTTPException(
             status_code=503,
-            detail="AI models are not loaded. Server running in degraded mode."
+            detail=f"AI models are not loaded. Error: {_pipeline_error or 'Unknown initialization error'}"
         )
 
     # Read uploaded image bytes → decode to numpy BGR array

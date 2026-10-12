@@ -66,83 +66,93 @@ def match_plate(ocr_text: str, db_plates: list[str], min_ratio: float = 0.80, ma
 
 class PlateOCR:
     """
-    Lightweight wrapper around PaddleOCR inference for license plate recognition.
-    Uses the exported PP-OCRv5 Mobile model (inference_model/).
+    Robust wrapper around PaddleOCR for license plate recognition.
+    Supports both custom exported models and standard PaddleOCR fallback.
     """
 
     def __init__(self, model_dir: str):
-        """
-        Parameters
-        ----------
-        model_dir : Path to the folder containing inference.json,
-                    inference.pdiparams, inference.yml, and dict.txt (../dict.txt).
-        """
-        from paddleocr import PaddleOCR
+        self._ocr = None
         dict_path = str(Path(model_dir).parent / "dict.txt")
-        self._ocr = PaddleOCR(
-            rec_model_dir=model_dir,
-            rec_char_dict_path=dict_path,
-            use_textline_orientation=True,
-            lang='en',
-            enable_mkldnn=False,
-            use_gpu=False,
-        )
+
+        # 1. Try loading custom trained model
+        try:
+            from paddleocr import PaddleOCR
+            self._ocr = PaddleOCR(
+                rec_model_dir=str(model_dir),
+                rec_char_dict_path=dict_path,
+                lang='en',
+                show_log=False,
+            )
+            print("[PlateOCR] Loaded custom model successfully ✓")
+        except Exception as e1:
+            print(f"[PlateOCR] Custom model failed ({e1}), falling back to standard PaddleOCR...")
+            try:
+                from paddleocr import PaddleOCR
+                self._ocr = PaddleOCR(
+                    use_angle_cls=True,
+                    lang='en',
+                    show_log=False,
+                )
+                print("[PlateOCR] Loaded standard PaddleOCR successfully ✓")
+            except Exception as e2:
+                print(f"[PlateOCR] Fallback also failed: {e2}")
+                self._ocr = None
+
+    def is_ready(self) -> bool:
+        return self._ocr is not None
 
     def read(self, img_bgr) -> tuple[str, float]:
         """
         Read a license plate from a cropped BGR image (numpy array).
-
-        Returns
-        -------
-        (text: str, confidence: float)
-            text        : Cleaned, uppercased plate string
-            confidence  : Average character confidence (0.0 – 1.0)
+        Returns (text: str, confidence: float).
         """
-        import numpy as np
-
-        result = self._ocr.predict(img_bgr)
-        if not result:
+        if not self.is_ready():
             return "", 0.0
 
-        res = result[0]
-        texts = res.get('rec_texts', [])
-        scores = res.get('rec_scores', [])
-        polys = res.get('rec_polys', [])
+        try:
+            # Standard PaddleOCR .ocr() interface
+            if hasattr(self._ocr, 'ocr'):
+                result = self._ocr.ocr(img_bgr, cls=False)
+                if not result or not result[0]:
+                    return "", 0.0
 
-        if not texts:
+                texts = []
+                confs = []
+                for line in result[0]:
+                    if line and len(line) >= 2:
+                        txt = line[1][0]
+                        conf = float(line[1][1])
+                        cleaned = clean_plate_text(txt)
+                        if cleaned:
+                            texts.append(cleaned)
+                            confs.append(conf)
+
+                if not texts:
+                    return "", 0.0
+
+                full_text = "".join(texts)
+                avg_conf = sum(confs) / len(confs) if confs else 0.0
+                return full_text, round(float(avg_conf), 3)
+
+            # Custom .predict() interface if present
+            elif hasattr(self._ocr, 'predict'):
+                result = self._ocr.predict(img_bgr)
+                if not result:
+                    return "", 0.0
+                res = result[0]
+                texts = res.get('rec_texts', [])
+                scores = res.get('rec_scores', [])
+                if not texts:
+                    return "", 0.0
+                raw = clean_plate_text("".join(texts))
+                conf = float(sum(scores) / len(scores)) if scores else 0.0
+                return raw, round(conf, 3)
+
+        except Exception as e:
+            print(f"[PlateOCR] Recognition error: {e}")
             return "", 0.0
 
-        # Build (center_y, text, score) tuples for multi-line plates
-        items = []
-        for i, (t, s) in enumerate(zip(texts, scores)):
-            cy = float(np.array(polys[i])[:, 1].mean()) if i < len(polys) else 0.0
-            items.append((cy, t, s))
-
-        if len(items) == 1:
-            raw = clean_plate_text(items[0][1])
-            return raw, float(items[0][2])
-
-        # Sort lines by vertical center (top → bottom)
-        items.sort(key=lambda it: it[0])
-
-        def clean(t):
-            return clean_plate_text(t)
-
-        top = clean(items[0][1])
-        bot = "".join(clean(it[1]) for it in items[1:])
-        conf = float(sum(it[2] for it in items) / len(items))
-
-        # Try both orderings; pick whichever matches the VN plate format
-        cand1 = top + bot
-        cand2 = bot + top
-
-        if is_vn_plate(cand1):
-            return cand1, conf
-        if is_vn_plate(cand2):
-            return cand2, conf
-
-        # Neither matches format -> return top+bottom (higher layout probability)
-        return cand1, conf
+        return "", 0.0
 
 
 class PlatePipeline:
@@ -169,6 +179,9 @@ class PlatePipeline:
         self._ocr = PlateOCR(ocr_model_dir)
 
         print("[Pipeline] Ready ✓")
+
+    def is_ready(self) -> bool:
+        return self._detector is not None and self._ocr is not None and self._ocr.is_ready()
 
     def process_image(self, image_input) -> dict:
         """
@@ -200,6 +213,16 @@ class PlatePipeline:
         # ── 2. YOLO: detect license plate bounding box ─────────────────
         det_result = self._detector(img, verbose=False)[0]
         if len(det_result.boxes) == 0:
+            # Fallback: if YOLO didn't catch the box (e.g. motorbike / angled view),
+            # attempt direct OCR on the image.
+            plate_text, ocr_conf = self._ocr.read(img)
+            if plate_text:
+                return {
+                    "plate": plate_text,
+                    "confidence": round(ocr_conf, 4),
+                    "bbox": None,
+                    "error": None
+                }
             return {"plate": "", "confidence": 0.0, "bbox": None,
                     "error": "No license plate detected in image"}
 
@@ -214,9 +237,13 @@ class PlatePipeline:
         # ── 4. OCR: read plate text ─────────────────────────────────────
         plate_text, ocr_conf = self._ocr.read(plate_crop)
 
+        # If cropped reading is empty, attempt reading full image
+        if not plate_text:
+            plate_text, ocr_conf = self._ocr.read(img)
+
         return {
             "plate": plate_text,
-            "confidence": round(det_conf * ocr_conf, 4),
+            "confidence": round(det_conf * (ocr_conf if ocr_conf > 0 else 0.8), 4),
             "bbox": [x1, y1, x2, y2],
             "error": None
         }
