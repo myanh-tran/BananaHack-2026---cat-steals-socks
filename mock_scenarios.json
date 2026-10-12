@@ -1,8 +1,8 @@
 {
   "scenarios": {
     "normal": {
-      "name": "Bình thường (Còn nhiều chỗ)",
-      "description": "Các tòa A, B, C, D và khu khách G đều còn nhiều chỗ trống.",
+      "name": "1. Normal (Ample bays available across all zones)",
+      "description": "Buildings A, B, C, D and Guest Zone G have plenty of vacant parking bays.",
       "gate": {
         "status": "ok",
         "plate": "51A12345",
@@ -13,8 +13,8 @@
       "occupied_slots": ["A-01", "A-04", "B-02", "B-05", "C-01", "C-03", "D-02", "D-04", "G-01", "G-03"]
     },
     "zone_a_full": {
-      "name": "Tòa A đầy 100% (Các tòa khác còn chỗ)",
-      "description": "Toàn bộ 6 ô của Tòa A đã kín chỗ. Hệ thống sẽ tự điều phối sang ô gần nhất ở tòa lân cận.",
+      "name": "2. Building A 100% Full (Automatic Overflow Re-route)",
+      "description": "All 6 bays of Building A are occupied. System automatically routes resident to closest neighboring bay.",
       "gate": {
         "status": "ok",
         "plate": "51A99999",
@@ -25,8 +25,8 @@
       "occupied_slots": ["A-01", "A-02", "A-03", "A-04", "A-05", "A-06", "B-03", "C-01", "D-02", "G-01"]
     },
     "guest_zone_full": {
-      "name": "Khu xe khách G đầy 100%",
-      "description": "Khu khách G-01..G-06 đã kín. Xe khách sẽ được hỏi đích đến hoặc điều phối sang tòa lân cận.",
+      "name": "3. Guest Zone G 100% Full (Overflow to Nearest Building)",
+      "description": "Guest bays G-01..G-06 are fully occupied. Guests are directed to nearest available bay.",
       "gate": {
         "status": "ok",
         "plate": "29A98246",
@@ -37,8 +37,8 @@
       "occupied_slots": ["G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "A-02", "B-03", "C-04"]
     },
     "lot_full": {
-      "name": "CẢ BÃI XE ĐẦY 100% (FULL)",
-      "description": "Tất cả 30 ô đỗ xe đều đã kín. Cổng barrier từ chối mở và phát cảnh báo PARKING FULL.",
+      "name": "4. 🚨 Entire Campus 100% Full (Access Denied)",
+      "description": "All 30 bays are occupied. Entrance barrier refuses entry and displays parking full alert.",
       "gate": {
         "status": "ok",
         "plate": "30E88888",
@@ -49,8 +49,8 @@
       "all_occupied": true
     },
     "only_one_slot": {
-      "name": "Chỉ còn đúng 1 ô trống toàn bãi (D-06)",
-      "description": "29/30 ô đã bị chiếm đóng, chỉ còn đúng 1 ô duy nhất D-06.",
+      "name": "5. Single Bay Remaining Across Campus (D-06)",
+      "description": "29 out of 30 bays are occupied. Only one bay (D-06) remains vacant.",
       "gate": {
         "status": "ok",
         "plate": "43A67890",
@@ -61,8 +61,8 @@
       "all_occupied_except": ["D-06"]
     },
     "resident_building_b": {
-      "name": "Cư dân Tòa B (51B56789)",
-      "description": "Xe cư dân Tòa B vào cổng, hệ thống cấp ô trống gần Thang máy B nhất.",
+      "name": "6. Resident of Building B (51B56789)",
+      "description": "Resident of Building B approaches gate; system assigns closest vacant bay near Elevator B.",
       "gate": {
         "status": "ok",
         "plate": "51B56789",
@@ -73,21 +73,21 @@
       "occupied_slots": ["B-01", "B-03", "A-01", "C-02", "D-01"]
     },
     "ocr_unreadable": {
-      "name": "Lỗi OCR: Không đọc được biển số (PLATE_UNREADABLE)",
-      "description": "Biển số bị che khuất hoặc chụp mờ, hệ thống yêu cầu quét lại hoặc nhập tay.",
+      "name": "7. OCR Error: Unreadable Plate",
+      "description": "License plate is blurred or obscured. System requests manual review or re-scan.",
       "gate": {
         "status": "error",
         "code": "PLATE_UNREADABLE",
-        "message": "Không đọc được biển số, vui lòng chụp lại"
+        "message": "Unable to recognize license plate. Please scan again."
       }
     },
     "ocr_no_vehicle": {
-      "name": "Lỗi OCR: Không thấy xe (NO_VEHICLE)",
-      "description": "Ảnh chụp cổng trống, camera AI không phát hiện phương tiện.",
+      "name": "8. OCR Error: No Vehicle Detected",
+      "description": "Camera frame is empty. AI detector finds no vehicle before barrier.",
       "gate": {
         "status": "error",
         "code": "NO_VEHICLE",
-        "message": "Không phát hiện xe trước rào chắn"
+        "message": "No vehicle detected before barrier."
       }
     }
   }

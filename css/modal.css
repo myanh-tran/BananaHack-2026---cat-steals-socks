@@ -1,98 +1,88 @@
-/* Guest Destination Modal Backdrop */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 7, 18, 0.75);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 1rem;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-}
-
-/* Modal Card Dialog */
-.modal-card {
-  background: #131c2e;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: 14px;
-  width: 100%;
-  max-width: 440px;
-  padding: 1.75rem;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(6, 182, 212, 0.2);
+/* Guest Destination Inline Card (Phase 1 Clean UX) */
+.guest-destination-card {
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 0.9rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  animation: modal-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 0.65rem;
+  animation: guest-card-fade 0.25s ease-out;
 }
 
-@keyframes modal-appear {
+@keyframes guest-card-fade {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }
 
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #fff;
+.guest-card-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.guest-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.03em;
+}
+
+.guest-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.guest-building-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
 }
 
-.modal-desc {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* Modal Form Controls */
-.form-group {
+.btn-building-choice {
+  padding: 0.55rem 0.4rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.select-control {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  background: #0b111e;
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 0.95rem;
+  align-items: center;
+  gap: 0.2rem;
+  transition: all 0.15s ease;
   font-family: inherit;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
 }
 
-.select-control:focus {
-  border-color: var(--border-highlight);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+.btn-building-choice:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+.btn-building-choice:active {
+  transform: translateY(0);
 }
 
-/* Visibility Toggle Classes */
+.btn-building-choice .bldg-icon {
+  font-size: 0.95rem;
+}
+
+/* Visibility Utility */
 .hidden {
   display: none !important;
 }

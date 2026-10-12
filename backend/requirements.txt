@@ -1,0 +1,22 @@
+# SmartPark AI — Backend Dependencies
+# =====================================
+# Install with:  pip install -r requirements.txt
+#
+# NOTE: paddlepaddle and paddleocr must be installed in the correct order.
+#       PaddlePaddle CPU version works on machines without GPU.
+#       If on a GPU machine, replace 'paddlepaddle' with 'paddlepaddle-gpu'.
+
+# ── Web server ──────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9     # Required for file upload (UploadFile)
+
+# ── AI / CV ─────────────────────────────────────────────────
+paddlepaddle
+paddleocr>=2.9.0            # PaddleOCR wrapper
+ultralytics>=8.2.0          # YOLOv8 (best.pt)
+opencv-python-headless>=4.9.0 # Headless OpenCV for server/docker
+
+# ── Utilities ────────────────────────────────────────────────
+numpy>=1.26.0
+networkx>=3.0.0

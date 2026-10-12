@@ -1,0 +1,2037 @@
+[
+  {
+    "license_plate": "89A15973",
+    "resident_name": "Phạm Văn Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F32659",
+    "resident_name": "Vũ Anh Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A07379",
+    "resident_name": "Phạm Hữu Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "29C22776",
+    "resident_name": "Trần Văn Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E30640",
+    "resident_name": "Vũ Văn Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F71554",
+    "resident_name": "Đoàn Khánh Huy",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F95191",
+    "resident_name": "Võ Văn Tú",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A63839",
+    "resident_name": "Ngô Tuấn Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A08824",
+    "resident_name": "Phan Tuấn Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F88013",
+    "resident_name": "Hồ Đức Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "29H38452",
+    "resident_name": "Võ Thị Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F03523",
+    "resident_name": "Đoàn Đức Minh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A04180",
+    "resident_name": "Đoàn Ngọc Uyên",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F83605",
+    "resident_name": "Đỗ Quang Trí",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F93644",
+    "resident_name": "Trần Anh Tú",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A46511",
+    "resident_name": "Lê Anh Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F05779",
+    "resident_name": "Hồ Hoàng Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "14A09290",
+    "resident_name": "Đỗ Thanh Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "20A36078",
+    "resident_name": "Phan Hoàng Trí",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E77379",
+    "resident_name": "Lê Thanh Quân",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A65169",
+    "resident_name": "Vũ Thanh Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A99279",
+    "resident_name": "Võ Anh Trang",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G01866",
+    "resident_name": "Trần Anh Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F20049",
+    "resident_name": "Bùi Gia Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "29V1910",
+    "resident_name": "Phan Tuấn Hùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F43755",
+    "resident_name": "Lý Gia Việt",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E86044",
+    "resident_name": "Dương Minh Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A33928",
+    "resident_name": "Vũ Hoàng Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C65227",
+    "resident_name": "Ngô Gia Long",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A46294",
+    "resident_name": "Hoàng Mai Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G25794",
+    "resident_name": "Phạm Minh Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A40293",
+    "resident_name": "Ngô Hữu Minh",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G61086",
+    "resident_name": "Dương Hoàng Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E41231",
+    "resident_name": "Phạm Hoàng Tú",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E76226",
+    "resident_name": "Bùi Đức Hương",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A07394",
+    "resident_name": "Huỳnh Thu An",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C66073",
+    "resident_name": "Võ Thanh Phúc",
+    "building": "A"
+  },
+  {
+    "license_plate": "36A01418",
+    "resident_name": "Đặng Quang Em",
+    "building": "B"
+  },
+  {
+    "license_plate": "30M4253",
+    "resident_name": "Huỳnh Văn Thảo",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A07758",
+    "resident_name": "Lý Văn Dũng",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A02343",
+    "resident_name": "Đặng Anh Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A71980",
+    "resident_name": "Lê Hữu Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A10429",
+    "resident_name": "Lê Minh Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A60432",
+    "resident_name": "Lý Thanh Hà",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A37519",
+    "resident_name": "Ngô Quang Quân",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G10428",
+    "resident_name": "Phan Ngọc Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G58236",
+    "resident_name": "Đỗ Thu Việt",
+    "building": "C"
+  },
+  {
+    "license_plate": "29D09566",
+    "resident_name": "Dương Đức Huy",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A92450",
+    "resident_name": "Lê Tuấn An",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A23136",
+    "resident_name": "Đoàn Anh Sơn",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F78907",
+    "resident_name": "Nguyễn Hữu Trí",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E60123",
+    "resident_name": "Trần Anh Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H15606",
+    "resident_name": "Bùi Hữu Phúc",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E19752",
+    "resident_name": "Võ Mai Hùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A10993",
+    "resident_name": "Hoàng Mai Huy",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A34588",
+    "resident_name": "Ngô Quang Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E02141",
+    "resident_name": "Ngô Bảo Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F60947",
+    "resident_name": "Dương Thị Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "29D05685",
+    "resident_name": "Phạm Thị Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F32245",
+    "resident_name": "Bùi Đức Huy",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G58858",
+    "resident_name": "Phan Thu Em",
+    "building": "B"
+  },
+  {
+    "license_plate": "29D51411",
+    "resident_name": "Huỳnh Hoàng Nga",
+    "building": "A"
+  },
+  {
+    "license_plate": "14A43441",
+    "resident_name": "Lê Thu Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A52186",
+    "resident_name": "Phạm Thị Thắng",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A15939",
+    "resident_name": "Nguyễn Hữu Tú",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F52456",
+    "resident_name": "Huỳnh Khánh Phong",
+    "building": "B"
+  },
+  {
+    "license_plate": "37A39988",
+    "resident_name": "Phan Gia Việt",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F71578",
+    "resident_name": "Huỳnh Gia An",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G56695",
+    "resident_name": "Võ Thu Hương",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A37277",
+    "resident_name": "Đoàn Mai Em",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A10341",
+    "resident_name": "Đặng Quang Bình",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G09132",
+    "resident_name": "Đoàn Thị Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A20061",
+    "resident_name": "Trần Thị Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "30Z3555",
+    "resident_name": "Đinh Thanh Bình",
+    "building": "C"
+  },
+  {
+    "license_plate": "99A08929",
+    "resident_name": "Lê Thanh Cường",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F5204",
+    "resident_name": "Lê Anh Minh",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H17054",
+    "resident_name": "Vũ Thị Thảo",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A79330",
+    "resident_name": "Ngô Tuấn Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A15639",
+    "resident_name": "Bùi Anh Hà",
+    "building": "B"
+  },
+  {
+    "license_plate": "29H31658",
+    "resident_name": "Hoàng Ngọc Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "29D21596",
+    "resident_name": "Lê Văn Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G39509",
+    "resident_name": "Phạm Hữu Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "56S0009",
+    "resident_name": "Đinh Hoàng Em",
+    "building": "B"
+  },
+  {
+    "license_plate": "37C37544",
+    "resident_name": "Lê Anh Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "30V7921",
+    "resident_name": "Huỳnh Thu Uyên",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A48170",
+    "resident_name": "Đặng Văn Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F45081",
+    "resident_name": "Đặng Đức Việt",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A92957",
+    "resident_name": "Võ Đức Việt",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G55655",
+    "resident_name": "Đoàn Minh Hà",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A26144",
+    "resident_name": "Phan Tuấn Hùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A12327",
+    "resident_name": "Võ Mai Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A37229",
+    "resident_name": "Lê Khánh Uyên",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A21740",
+    "resident_name": "Trần Văn Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A79209",
+    "resident_name": "Võ Thanh Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A87180",
+    "resident_name": "Đoàn Khánh Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A97571",
+    "resident_name": "Phạm Hữu Việt",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A80744",
+    "resident_name": "Hoàng Thị Uyên",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F78286",
+    "resident_name": "Đoàn Minh Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "30S0426",
+    "resident_name": "Trần Ngọc Long",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F76809",
+    "resident_name": "Đỗ Quang Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A33833",
+    "resident_name": "Phạm Bảo Tú",
+    "building": "C"
+  },
+  {
+    "license_plate": "29H02042",
+    "resident_name": "Ngô Minh Huy",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E43502",
+    "resident_name": "Huỳnh Khánh An",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G46437",
+    "resident_name": "Bùi Khánh Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "88A33744",
+    "resident_name": "Vũ Hoàng Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F74338",
+    "resident_name": "Phạm Gia Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A42050",
+    "resident_name": "Lý Anh Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E99127",
+    "resident_name": "Đỗ Ngọc Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A25885",
+    "resident_name": "Vũ Văn Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A92645",
+    "resident_name": "Hồ Tuấn Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E05207",
+    "resident_name": "Võ Bảo Thắng",
+    "building": "C"
+  },
+  {
+    "license_plate": "98A17339",
+    "resident_name": "Hồ Tuấn An",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G48917",
+    "resident_name": "Võ Thanh Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F46189",
+    "resident_name": "Trần Đức Thảo",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F97025",
+    "resident_name": "Đỗ Tuấn Nam",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A05684",
+    "resident_name": "Đinh Đức Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A95205",
+    "resident_name": "Phan Hoàng Bình",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F60898",
+    "resident_name": "Ngô Văn Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F20449",
+    "resident_name": "Phan Bảo Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A57599",
+    "resident_name": "Bùi Tuấn Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G34241",
+    "resident_name": "Đặng Ngọc Trang",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F70924",
+    "resident_name": "Bùi Gia Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G00567",
+    "resident_name": "Đoàn Minh Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "62A02636",
+    "resident_name": "Hồ Thanh Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "99A32294",
+    "resident_name": "Đặng Gia Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G41171",
+    "resident_name": "Đặng Ngọc Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E38721",
+    "resident_name": "Bùi Thu Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E52374",
+    "resident_name": "Phan Mai Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A06932",
+    "resident_name": "Huỳnh Hữu Hương",
+    "building": "C"
+  },
+  {
+    "license_plate": "89D00590",
+    "resident_name": "Bùi Hữu Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F27580",
+    "resident_name": "Đặng Anh Tùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A18036",
+    "resident_name": "Hoàng Văn Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A54827",
+    "resident_name": "Lý Hữu Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A06669",
+    "resident_name": "Phan Gia Phong",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E19903",
+    "resident_name": "Vũ Minh Thắng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A68251",
+    "resident_name": "Nguyễn Đức Tú",
+    "building": "B"
+  },
+  {
+    "license_plate": "88A08079",
+    "resident_name": "Vũ Thanh Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "19A32726",
+    "resident_name": "Đinh Thu Bình",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F51443",
+    "resident_name": "Vũ Đức Nga",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F86034",
+    "resident_name": "Dương Tuấn Tú",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G51511",
+    "resident_name": "Đinh Khánh Uyên",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G47036",
+    "resident_name": "Dương Thanh Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "19N1866",
+    "resident_name": "Dương Hoàng Tú",
+    "building": "A"
+  },
+  {
+    "license_plate": "89C15637",
+    "resident_name": "Võ Mai Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E91177",
+    "resident_name": "Võ Thu Cường",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F65939",
+    "resident_name": "Đặng Anh Hà",
+    "building": "B"
+  },
+  {
+    "license_plate": "24A15935",
+    "resident_name": "Bùi Hữu Em",
+    "building": "A"
+  },
+  {
+    "license_plate": "34A20477",
+    "resident_name": "Vũ Gia Trí",
+    "building": "A"
+  },
+  {
+    "license_plate": "36A04104",
+    "resident_name": "Phan Hữu Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G43912",
+    "resident_name": "Bùi Thu Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H07062",
+    "resident_name": "Phan Khánh Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F65946",
+    "resident_name": "Nguyễn Gia Phong",
+    "building": "A"
+  },
+  {
+    "license_plate": "98A29814",
+    "resident_name": "Đỗ Ngọc Tú",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A48483",
+    "resident_name": "Ngô Anh Phong",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A01771",
+    "resident_name": "Võ Khánh Phong",
+    "building": "A"
+  },
+  {
+    "license_plate": "89C19599",
+    "resident_name": "Hồ Tuấn Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G54201",
+    "resident_name": "Hồ Thanh Uyên",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F51272",
+    "resident_name": "Hoàng Văn Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30S47926",
+    "resident_name": "Nguyễn Hữu Thắng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G11155",
+    "resident_name": "Hoàng Thu Hải",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A76121",
+    "resident_name": "Võ Gia Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A56048",
+    "resident_name": "Dương Tuấn Linh",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F25697",
+    "resident_name": "Võ Khánh Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A23451",
+    "resident_name": "Lý Văn Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G1155",
+    "resident_name": "Trần Bảo Huy",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A12388",
+    "resident_name": "Lê Thị Tú",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F65900",
+    "resident_name": "Vũ Quang Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "88A30598",
+    "resident_name": "Hoàng Anh Em",
+    "building": "B"
+  },
+  {
+    "license_plate": "99A12497",
+    "resident_name": "Phạm Quang Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F54745",
+    "resident_name": "Võ Bảo Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E90257",
+    "resident_name": "Phạm Thanh Hương",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A09096",
+    "resident_name": "Nguyễn Ngọc Sơn",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G27838",
+    "resident_name": "Hồ Gia Trí",
+    "building": "A"
+  },
+  {
+    "license_plate": "99A08487",
+    "resident_name": "Lê Anh Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G19663",
+    "resident_name": "Đặng Đức Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "98A32802",
+    "resident_name": "Trần Bảo Quân",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A96308",
+    "resident_name": "Đỗ Hữu Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "29E00010",
+    "resident_name": "Bùi Văn Vinh",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F70192",
+    "resident_name": "Lý Đức Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E48226",
+    "resident_name": "Dương Minh Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "18A07826",
+    "resident_name": "Đinh Hoàng Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F10317",
+    "resident_name": "Lý Thu Nam",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A12433",
+    "resident_name": "Võ Tuấn Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A60434",
+    "resident_name": "Lê Hoàng Việt",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F86574",
+    "resident_name": "Vũ Thu Sơn",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G51624",
+    "resident_name": "Hồ Tuấn An",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G43755",
+    "resident_name": "Bùi Thanh Phong",
+    "building": "A"
+  },
+  {
+    "license_plate": "29U3763",
+    "resident_name": "Đỗ Hoàng Linh",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A29359",
+    "resident_name": "Võ Văn Phúc",
+    "building": "A"
+  },
+  {
+    "license_plate": "30Z8657",
+    "resident_name": "Lê Anh Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F07227",
+    "resident_name": "Lý Anh Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A62043",
+    "resident_name": "Lý Thu Tùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F45865",
+    "resident_name": "Lê Ngọc Huy",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F85806",
+    "resident_name": "Vũ Ngọc Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "34A31506",
+    "resident_name": "Đỗ Mai Quân",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C81839",
+    "resident_name": "Đỗ Khánh Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A09586",
+    "resident_name": "Bùi Bảo Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A13780",
+    "resident_name": "Võ Ngọc Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A36257",
+    "resident_name": "Phạm Quang Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A05197",
+    "resident_name": "Đoàn Thanh Hùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "89C13497",
+    "resident_name": "Lý Hoàng Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A46295",
+    "resident_name": "Đinh Ngọc Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A68005",
+    "resident_name": "Đặng Anh Long",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A60513",
+    "resident_name": "Đặng Văn Trí",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E50207",
+    "resident_name": "Hoàng Hoàng Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E20701",
+    "resident_name": "Đoàn Ngọc Trí",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A46748",
+    "resident_name": "Lý Đức Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E63785",
+    "resident_name": "Đặng Mai Phong",
+    "building": "B"
+  },
+  {
+    "license_plate": "52F7584",
+    "resident_name": "Bùi Thanh Bình",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A88459",
+    "resident_name": "Lý Đức Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E13028",
+    "resident_name": "Hồ Mai Cường",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A02965",
+    "resident_name": "Trần Minh Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A44039",
+    "resident_name": "Đặng Hữu Huy",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H12891",
+    "resident_name": "Đoàn Khánh Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A58373",
+    "resident_name": "Vũ Gia Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F50167",
+    "resident_name": "Đặng Khánh Hương",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F90540",
+    "resident_name": "Trần Đức Tú",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F76935",
+    "resident_name": "Phan Hoàng Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30S2639",
+    "resident_name": "Huỳnh Anh Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A62851",
+    "resident_name": "Lê Thanh An",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F74905",
+    "resident_name": "Dương Mai Hương",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F32598",
+    "resident_name": "Vũ Ngọc Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F99015",
+    "resident_name": "Dương Hữu Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H07716",
+    "resident_name": "Võ Quang Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "30X4243",
+    "resident_name": "Đoàn Anh Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G53279",
+    "resident_name": "Võ Minh Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F44101",
+    "resident_name": "Huỳnh Ngọc Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C67798",
+    "resident_name": "Đặng Thu Dũng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F91149",
+    "resident_name": "Đặng Gia Hà",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E7662",
+    "resident_name": "Đoàn Mai Nga",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F93591",
+    "resident_name": "Trần Khánh Trung",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A36815",
+    "resident_name": "Võ Văn Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F57331",
+    "resident_name": "Nguyễn Hoàng Sơn",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G25495",
+    "resident_name": "Huỳnh Mai Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C73587",
+    "resident_name": "Dương Hoàng Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A73570",
+    "resident_name": "Ngô Mai Cường",
+    "building": "B"
+  },
+  {
+    "license_plate": "29H06845",
+    "resident_name": "Đỗ Khánh Linh",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A04999",
+    "resident_name": "Phạm Thanh Linh",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A29441",
+    "resident_name": "Lý Ngọc Trang",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A47005",
+    "resident_name": "Đoàn Thị Nga",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G32955",
+    "resident_name": "Bùi Hoàng Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A69919",
+    "resident_name": "Hồ Văn Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "51A00530",
+    "resident_name": "Dương Khánh Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E80377",
+    "resident_name": "Đinh Bảo Thảo",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A05080",
+    "resident_name": "Dương Thị Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A71103",
+    "resident_name": "Đoàn Minh Hương",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G03474",
+    "resident_name": "Lý Đức An",
+    "building": "C"
+  },
+  {
+    "license_plate": "99A10432",
+    "resident_name": "Vũ Thanh Hương",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A18577",
+    "resident_name": "Nguyễn Khánh Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F70179",
+    "resident_name": "Phạm Thu Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E63699",
+    "resident_name": "Hoàng Mai Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E68657",
+    "resident_name": "Đinh Hoàng Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A61153",
+    "resident_name": "Lý Anh Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A74491",
+    "resident_name": "Hoàng Gia Hùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E97974",
+    "resident_name": "Đinh Minh Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A11297",
+    "resident_name": "Võ Khánh Linh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E32586",
+    "resident_name": "Võ Văn Hương",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A09730",
+    "resident_name": "Đặng Mai Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "15A06596",
+    "resident_name": "Dương Mai Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "31F5724",
+    "resident_name": "Đoàn Gia Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E69436",
+    "resident_name": "Phan Anh Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "34A31825",
+    "resident_name": "Vũ Khánh Bình",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A15961",
+    "resident_name": "Lý Gia Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "29C66625",
+    "resident_name": "Hoàng Mai Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "26A00164",
+    "resident_name": "Đinh Tuấn Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F47792",
+    "resident_name": "Dương Đức Phúc",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A76791",
+    "resident_name": "Nguyễn Minh Nam",
+    "building": "C"
+  },
+  {
+    "license_plate": "29T2471",
+    "resident_name": "Hoàng Hữu Phong",
+    "building": "B"
+  },
+  {
+    "license_plate": "99A33254",
+    "resident_name": "Bùi Gia Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G15970",
+    "resident_name": "Bùi Gia Linh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E97662",
+    "resident_name": "Lý Thị Thảo",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F32643",
+    "resident_name": "Vũ Ngọc Huy",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G61462",
+    "resident_name": "Lê Khánh Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "90A09054",
+    "resident_name": "Phạm Thu Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "29H15207",
+    "resident_name": "Đặng Văn Bình",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E71583",
+    "resident_name": "Trần Ngọc Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G16380",
+    "resident_name": "Ngô Minh Huy",
+    "building": "C"
+  },
+  {
+    "license_plate": "30Z1040",
+    "resident_name": "Ngô Thanh Hải",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G46885",
+    "resident_name": "Lê Gia Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A70190",
+    "resident_name": "Vũ Mai Sơn",
+    "building": "A"
+  },
+  {
+    "license_plate": "29U5411",
+    "resident_name": "Vũ Thu Thắng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G40304",
+    "resident_name": "Dương Hoàng Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A20664",
+    "resident_name": "Dương Ngọc Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F39361",
+    "resident_name": "Huỳnh Hữu Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "34C22496",
+    "resident_name": "Đặng Khánh Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F21510",
+    "resident_name": "Dương Ngọc Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G09483",
+    "resident_name": "Lý Đức Huy",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A55695",
+    "resident_name": "Đỗ Ngọc Trí",
+    "building": "B"
+  },
+  {
+    "license_plate": "15A16871",
+    "resident_name": "Nguyễn Gia Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E49536",
+    "resident_name": "Trần Mai Uyên",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A99948",
+    "resident_name": "Vũ Bảo Huy",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E04914",
+    "resident_name": "Phan Hoàng Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G03947",
+    "resident_name": "Hoàng Đức Việt",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F15695",
+    "resident_name": "Trần Ngọc Tùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A60986",
+    "resident_name": "Trần Bảo Trung",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A21413",
+    "resident_name": "Lê Ngọc Linh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A17831",
+    "resident_name": "Ngô Thanh Hùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "14A19068",
+    "resident_name": "Đoàn Bảo Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "89LD00275",
+    "resident_name": "Võ Thanh Hà",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A97701",
+    "resident_name": "Đặng Tuấn Tùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G56801",
+    "resident_name": "Dương Hữu Em",
+    "building": "A"
+  },
+  {
+    "license_plate": "29V6767",
+    "resident_name": "Hồ Bảo Cường",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G44167",
+    "resident_name": "Nguyễn Hoàng Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F15292",
+    "resident_name": "Dương Bảo Trang",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F86404",
+    "resident_name": "Võ Gia Uyên",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F99523",
+    "resident_name": "Đỗ Đức Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F71165",
+    "resident_name": "Lý Văn Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A32867",
+    "resident_name": "Bùi Anh Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30A20890",
+    "resident_name": "Dương Ngọc Thắng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E93815",
+    "resident_name": "Phạm Minh Bình",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E39814",
+    "resident_name": "Đặng Mai Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E58226",
+    "resident_name": "Vũ Minh Minh",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A04926",
+    "resident_name": "Đỗ Khánh Sơn",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A77998",
+    "resident_name": "Hoàng Khánh Thắng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F19643",
+    "resident_name": "Lý Khánh Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A13864",
+    "resident_name": "Đỗ Quang Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A14723",
+    "resident_name": "Vũ Bảo Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F67403",
+    "resident_name": "Đỗ Bảo Bình",
+    "building": "B"
+  },
+  {
+    "license_plate": "89A04369",
+    "resident_name": "Võ Quang Dũng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A96805",
+    "resident_name": "Lê Quang Thắng",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A92839",
+    "resident_name": "Nguyễn Thị Tùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E54093",
+    "resident_name": "Vũ Minh Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A60168",
+    "resident_name": "Phan Hữu Uyên",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F56330",
+    "resident_name": "Phan Quang Uyên",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E61035",
+    "resident_name": "Bùi Minh Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F44580",
+    "resident_name": "Nguyễn Hoàng Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "29Z1452",
+    "resident_name": "Hoàng Hoàng Tùng",
+    "building": "A"
+  },
+  {
+    "license_plate": "88A03336",
+    "resident_name": "Phạm Văn Em",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H37260",
+    "resident_name": "Đỗ Anh Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F18976",
+    "resident_name": "Nguyễn Thanh Hà",
+    "building": "A"
+  },
+  {
+    "license_plate": "51G52911",
+    "resident_name": "Hoàng Khánh Phúc",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E66122",
+    "resident_name": "Lê Mai Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "36A25649",
+    "resident_name": "Đinh Đức Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F57808",
+    "resident_name": "Vũ Thị Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "89LD00546",
+    "resident_name": "Đinh Ngọc Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A59464",
+    "resident_name": "Nguyễn Thị Phong",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G59810",
+    "resident_name": "Ngô Đức Phong",
+    "building": "C"
+  },
+  {
+    "license_plate": "14A25074",
+    "resident_name": "Dương Hữu Việt",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E64379",
+    "resident_name": "Bùi Minh Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F77854",
+    "resident_name": "Võ Tuấn Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F81060",
+    "resident_name": "Đinh Ngọc Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "88LD00757",
+    "resident_name": "Ngô Đức Tùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E96416",
+    "resident_name": "Phạm Quang Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "29D08722",
+    "resident_name": "Vũ Khánh Linh",
+    "building": "B"
+  },
+  {
+    "license_plate": "56P6961",
+    "resident_name": "Hồ Khánh Trung",
+    "building": "A"
+  },
+  {
+    "license_plate": "30M4703",
+    "resident_name": "Bùi Khánh Linh",
+    "building": "C"
+  },
+  {
+    "license_plate": "89A15530",
+    "resident_name": "Võ Bảo Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E85886",
+    "resident_name": "Lý Hữu Cường",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G35392",
+    "resident_name": "Lê Khánh Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G29750",
+    "resident_name": "Đỗ Minh Quân",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F92840",
+    "resident_name": "Đoàn Tuấn Trang",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G55031",
+    "resident_name": "Ngô Bảo Vinh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G41159",
+    "resident_name": "Ngô Thị Hương",
+    "building": "C"
+  },
+  {
+    "license_plate": "30Z0865",
+    "resident_name": "Đặng Bảo Dũng",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F77159",
+    "resident_name": "Đinh Quang Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A46791",
+    "resident_name": "Lý Anh Vinh",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E34441",
+    "resident_name": "Đỗ Bảo Dũng",
+    "building": "B"
+  },
+  {
+    "license_plate": "19A08564",
+    "resident_name": "Vũ Khánh Vinh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F67941",
+    "resident_name": "Đoàn Văn Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "29D02474",
+    "resident_name": "Võ Văn Hải",
+    "building": "B"
+  },
+  {
+    "license_plate": "20A29879",
+    "resident_name": "Đặng Tuấn Long",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E60863",
+    "resident_name": "Huỳnh Minh Sơn",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F22254",
+    "resident_name": "Hồ Hữu Em",
+    "building": "C"
+  },
+  {
+    "license_plate": "99A27405",
+    "resident_name": "Nguyễn Hữu Trung",
+    "building": "C"
+  },
+  {
+    "license_plate": "21A08531",
+    "resident_name": "Phan Gia Nam",
+    "building": "B"
+  },
+  {
+    "license_plate": "20A03038",
+    "resident_name": "Bùi Thanh Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "30G61239",
+    "resident_name": "Bùi Hữu Việt",
+    "building": "A"
+  },
+  {
+    "license_plate": "29H03560",
+    "resident_name": "Hoàng Thanh Tú",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A25808",
+    "resident_name": "Trần Hữu Hà",
+    "building": "B"
+  },
+  {
+    "license_plate": "35A10819",
+    "resident_name": "Ngô Mai Thảo",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A31544",
+    "resident_name": "Ngô Hoàng Hùng",
+    "building": "C"
+  },
+  {
+    "license_plate": "26A08211",
+    "resident_name": "Phạm Bảo Nam",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E19815",
+    "resident_name": "Đặng Mai Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "99A18766",
+    "resident_name": "Đặng Thị Huy",
+    "building": "B"
+  },
+  {
+    "license_plate": "30A90546",
+    "resident_name": "Trần Văn Hùng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F32665",
+    "resident_name": "Phan Minh Tú",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E45676",
+    "resident_name": "Đặng Tuấn Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "30G62107",
+    "resident_name": "Lý Khánh Hải",
+    "building": "A"
+  },
+  {
+    "license_plate": "30F77294",
+    "resident_name": "Hồ Anh Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A68783",
+    "resident_name": "Đỗ Hữu Minh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30G22721",
+    "resident_name": "Trần Khánh An",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E50692",
+    "resident_name": "Lê Tuấn Sơn",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F07555",
+    "resident_name": "Hồ Khánh Hương",
+    "building": "A"
+  },
+  {
+    "license_plate": "88D00328",
+    "resident_name": "Hồ Văn Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "90A07718",
+    "resident_name": "Dương Bảo Cường",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F21950",
+    "resident_name": "Phạm Anh Nam",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F26449",
+    "resident_name": "Hồ Hữu Minh",
+    "building": "B"
+  },
+  {
+    "license_plate": "29A17543",
+    "resident_name": "Bùi Anh Linh",
+    "building": "A"
+  },
+  {
+    "license_plate": "89A11039",
+    "resident_name": "Lê Đức Phúc",
+    "building": "C"
+  },
+  {
+    "license_plate": "51F86947",
+    "resident_name": "Phan Bảo Long",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A62539",
+    "resident_name": "Hoàng Anh Dũng",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A77397",
+    "resident_name": "Võ Quang Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "34A13974",
+    "resident_name": "Hoàng Hữu Hải",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A26583",
+    "resident_name": "Lý Thu Tú",
+    "building": "C"
+  },
+  {
+    "license_plate": "30E71224",
+    "resident_name": "Dương Tuấn Vinh",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F94376",
+    "resident_name": "Bùi Minh Nga",
+    "building": "A"
+  },
+  {
+    "license_plate": "29A71990",
+    "resident_name": "Lý Thu Thắng",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E06618",
+    "resident_name": "Võ Thị Long",
+    "building": "C"
+  },
+  {
+    "license_plate": "29D07881",
+    "resident_name": "Lê Ngọc Nga",
+    "building": "B"
+  },
+  {
+    "license_plate": "30F35939",
+    "resident_name": "Trần Thị Long",
+    "building": "B"
+  },
+  {
+    "license_plate": "29H23855",
+    "resident_name": "Lê Hữu Thảo",
+    "building": "C"
+  },
+  {
+    "license_plate": "29A98366",
+    "resident_name": "Đinh Gia Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30F72928",
+    "resident_name": "Đoàn Thị Nga",
+    "building": "C"
+  },
+  {
+    "license_plate": "30A11111",
+    "resident_name": "Phan Tuấn Thảo",
+    "building": "B"
+  },
+  {
+    "license_plate": "29H35447",
+    "resident_name": "Đinh Minh Bình",
+    "building": "B"
+  },
+  {
+    "license_plate": "30E77408",
+    "resident_name": "Phạm Tuấn Trí",
+    "building": "A"
+  },
+  {
+    "license_plate": "30E54515",
+    "resident_name": "Đinh Thanh Bình",
+    "building": "A"
+  }
+]

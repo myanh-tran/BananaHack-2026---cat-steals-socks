@@ -19,26 +19,26 @@ const GRID_COLS = canvas ? Math.floor(canvas.width / GRID_SIZE) : 42;
 const GRID_ROWS = canvas ? Math.floor(canvas.height / GRID_SIZE) : 31;
 
 // Entry Gate Location
-let GATE_POSITION = [70, 520];
+let GATE_POSITION = [65, 565];
 
-// Fixed Building Elevators
+// Fixed Building Elevators (Positioned cleanly outside parking bay bounds)
 let elevators = [
-  { id: 'ELV-A', name: 'Elevator A', zone: 'A', position: [240, 68] },
-  { id: 'ELV-B', name: 'Elevator B', zone: 'B', position: [640, 68] },
-  { id: 'ELV-C', name: 'Elevator C', zone: 'C', position: [240, 435] },
-  { id: 'ELV-D', name: 'Elevator D', zone: 'D', position: [640, 435] }
+  { id: 'ELV-A', name: 'Elevator A', zone: 'A', position: [295, 30] },
+  { id: 'ELV-B', name: 'Elevator B', zone: 'B', position: [695, 30] },
+  { id: 'ELV-C', name: 'Elevator C', zone: 'C', position: [295, 520] },
+  { id: 'ELV-D', name: 'Elevator D', zone: 'D', position: [695, 520] }
 ];
 
-// Fixed Obstacles (Structural Pillars & Maintenance)
+// Fixed Obstacles (Structural Pillars in corridors & Hazard in clear lane)
 let fixedObstacles = [
-  { id: 'PIL-1', type: 'pillar', x: 235, y: 175, width: 20, height: 20, label: 'P1' },
-  { id: 'PIL-2', type: 'pillar', x: 635, y: 175, width: 20, height: 20, label: 'P2' },
-  { id: 'PIL-3', type: 'pillar', x: 235, y: 360, width: 20, height: 20, label: 'P3' },
-  { id: 'PIL-4', type: 'pillar', x: 635, y: 360, width: 20, height: 20, label: 'P4' },
-  { id: 'HAZ-1', type: 'hazard', x: 430, y: 260, width: 30, height: 30, label: '🚧' }
+  { id: 'PIL-1', type: 'pillar', x: 235, y: 165, width: 20, height: 20, label: 'P1' },
+  { id: 'PIL-2', type: 'pillar', x: 635, y: 165, width: 20, height: 20, label: 'P2' },
+  { id: 'PIL-3', type: 'pillar', x: 235, y: 370, width: 20, height: 20, label: 'P3' },
+  { id: 'PIL-4', type: 'pillar', x: 635, y: 370, width: 20, height: 20, label: 'P4' },
+  { id: 'HAZ-1', type: 'hazard', x: 435, y: 355, width: 28, height: 28, label: '🚧' }
 ];
 
-// Campus Zone Blueprint definition (30 Slots Total)
+// Campus Zone Blueprint definition (30 Slots Total - non-overlapping start positions)
 let defaultCampusZones = [
   {
     name: 'Building A',
@@ -46,7 +46,7 @@ let defaultCampusZones = [
     type: 'resident',
     count: 6,
     startX: 85,
-    startY: 75,
+    startY: 65,
     slotWidth: 46,
     slotHeight: 65,
     slotGap: 10,
@@ -58,7 +58,7 @@ let defaultCampusZones = [
     type: 'resident',
     count: 6,
     startX: 485,
-    startY: 75,
+    startY: 65,
     slotWidth: 46,
     slotHeight: 65,
     slotGap: 10,
@@ -70,7 +70,7 @@ let defaultCampusZones = [
     type: 'guest',
     count: 6,
     startX: 245,
-    startY: 235,
+    startY: 230,
     slotWidth: 50,
     slotHeight: 65,
     slotGap: 14,
@@ -82,7 +82,7 @@ let defaultCampusZones = [
     type: 'resident',
     count: 6,
     startX: 85,
-    startY: 435,
+    startY: 425,
     slotWidth: 46,
     slotHeight: 65,
     slotGap: 10,
@@ -94,7 +94,7 @@ let defaultCampusZones = [
     type: 'resident',
     count: 6,
     startX: 485,
-    startY: 435,
+    startY: 425,
     slotWidth: 46,
     slotHeight: 65,
     slotGap: 10,
@@ -192,14 +192,14 @@ function reserveSlot(slotId, plateNumber = '') {
     target.occupied = true; // Counted as unavailable
     target.reservedPlate = plateNumber;
     console.log(`[ParkingManager] Slot ${slotId} is now RESERVED for ${plateNumber}`);
-    initParkingMap();
+    redrawCurrentMap();
     return true;
   }
   return false;
 }
 
 /**
- * Releases a reserved slot back to free state if cancelled.
+ * Releases a reserved or occupied slot back to free state (Vehicle Check-Out).
  */
 function releaseSlot(slotId) {
   const target = activeParkingSlots.find((s) => s.id === slotId);
@@ -207,8 +207,47 @@ function releaseSlot(slotId) {
     target.isReserved = false;
     target.occupied = false;
     target.reservedPlate = null;
-    initParkingMap();
+    target.parkedPlate = null;
+    console.log(`[ParkingManager] Slot ${slotId} released back to FREE`);
+    redrawCurrentMap();
+    return true;
   }
+  return false;
+}
+
+/**
+ * Manually marks a slot as occupied.
+ */
+function occupySlot(slotId, plateNumber = 'MANUAL-PARK') {
+  const target = activeParkingSlots.find((s) => s.id === slotId);
+  if (target) {
+    target.isReserved = false;
+    target.occupied = true;
+    target.parkedPlate = plateNumber;
+    target.reservedPlate = null;
+    console.log(`[ParkingManager] Slot ${slotId} occupied by ${plateNumber}`);
+    redrawCurrentMap();
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Frees all 30 parking bays across campus.
+ */
+function freeAllBays() {
+  activeParkingSlots.forEach((s) => {
+    s.isReserved = false;
+    s.occupied = false;
+    s.reservedPlate = null;
+    s.parkedPlate = null;
+  });
+  currentDrawnPath = null;
+  currentWalkingInfo = null;
+  selectedSlot = null;
+  hideBayInspector();
+  redrawCurrentMap();
+  console.log('[ParkingManager] All 30 bays freed.');
 }
 
 /**
@@ -258,7 +297,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
     return {
       status: 'FULL',
       slot: null,
-      message: 'Toàn bộ bãi đỗ xe đã kín 100% (0/30 chỗ trống).'
+      message: 'Campus parking is 100% full (0/30 vacant bays). Entry barrier locked.'
     };
   }
 
@@ -293,7 +332,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: residentFreeSlots[0].distanceMeters,
         overflow: false,
-        message: `Đã cấp ô ${residentFreeSlots[0].slot.id} (Tòa ${building}) - cách thang máy ~${residentFreeSlots[0].distanceMeters}m.`
+        message: `Allocated Bay ${residentFreeSlots[0].slot.id} (Building ${building}) - approx. ${residentFreeSlots[0].distanceMeters}m to ${targetElevator.name}.`
       };
     }
 
@@ -311,7 +350,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: true,
-        message: `Tòa ${building} đã đầy! Đã điều phối sang ô ${best.slot.id} (cách thang máy Tòa ${building} ~${best.distanceMeters}m).`
+        message: `Building ${building} is 100% full! Re-routed to Bay ${best.slot.id} (~${best.distanceMeters}m walk to Elevator ${building}).`
       };
     }
   }
@@ -332,7 +371,7 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: false,
-        message: `Đã cấp ô khách ${best.slot.id} (Khu G) - cách thang máy ${targetElevator.name} ~${best.distanceMeters}m.`
+        message: `Allocated Guest Bay ${best.slot.id} (Zone G) - approx. ${best.distanceMeters}m to ${targetElevator.name}.`
       };
     }
 
@@ -350,12 +389,12 @@ function assignOptimalParkingSlot({ type = 'guest', building = null } = {}) {
         elevator: targetElevator,
         distanceMeters: best.distanceMeters,
         overflow: true,
-        message: `Khu khách G đã đầy! Đã điều phối sang ô ${best.slot.id} (Tòa ${best.slot.zone}) - cách thang máy ${targetElevator.name} ~${best.distanceMeters}m.`
+        message: `Guest Zone G is full! Re-routed to Bay ${best.slot.id} (Zone ${best.slot.zone}) - approx. ${best.distanceMeters}m to ${targetElevator.name}.`
       };
     }
   }
 
-  return { status: 'FULL', slot: null, message: 'Bãi đỗ xe đã kín chỗ.' };
+  return { status: 'FULL', slot: null, message: 'Campus parking is currently full.' };
 }
 
 /**
@@ -369,15 +408,15 @@ function buildNavigationGrid(slots, targetSlot = null) {
     const py = gy * GRID_SIZE + GRID_SIZE / 2;
 
     // Driving corridors (continuous connection to parking bays)
-    const inTopCorridor = py >= 135 && py <= 225; // Continuous access to Zone A, Zone B and top of Zone G
-    const inMiddleCorridor = py >= 295 && py <= 370; // Access to Zone G and bypass lane
-    const inBottomCorridor = py >= 360 && py <= 445; // Continuous access to Zone C & Zone D
-    const inGateLane = py >= 490 && py <= 560 && px <= 460; // Gate entrance lane
+    const inTopCorridor = py >= 130 && py <= 220; // Continuous access to Zone A, Zone B and top of Zone G
+    const inMiddleCorridor = py >= 295 && py <= 360; // Access to Zone G and bypass lane
+    const inBottomCorridor = py >= 355 && py <= 425; // Continuous access to Zone C & Zone D
+    const inGateLane = py >= 490 && py <= 585 && px <= 460; // Gate entrance lane
 
     // Vertical lanes (connecting all corridors)
-    const inLeftLane = px >= 35 && px <= 95 && py >= 135 && py <= 560;
-    const inCenterLane = px >= 415 && px <= 475 && py >= 135 && py <= 560;
-    const inRightLane = px >= 755 && px <= 810 && py >= 135 && py <= 560;
+    const inLeftLane = px >= 35 && px <= 95 && py >= 130 && py <= 585;
+    const inCenterLane = px >= 415 && px <= 475 && py >= 130 && py <= 585;
+    const inRightLane = px >= 755 && px <= 810 && py >= 130 && py <= 585;
 
     return inTopCorridor || inMiddleCorridor || inBottomCorridor || inGateLane || inLeftLane || inCenterLane || inRightLane;
   };
@@ -603,8 +642,8 @@ function drawMapEnvironment() {
 
   // Top corridor
   ctx.beginPath();
-  ctx.moveTo(40, 190);
-  ctx.lineTo(800, 190);
+  ctx.moveTo(40, 175);
+  ctx.lineTo(800, 175);
   ctx.stroke();
 
   // Bottom corridor
@@ -615,29 +654,30 @@ function drawMapEnvironment() {
 
   // Vertical center lane
   ctx.beginPath();
-  ctx.moveTo(445, 40);
-  ctx.lineTo(445, 520);
+  ctx.moveTo(445, 30);
+  ctx.lineTo(445, 560);
   ctx.stroke();
   ctx.restore();
 
-  // Entry Gate Box
+  // Entry Gate Box (Positioned cleanly in bottom-left corner)
   ctx.fillStyle = '#0284c7';
-  ctx.fillRect(20, 500, 100, 40);
+  ctx.fillRect(15, 548, 95, 34);
   ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2;
-  ctx.strokeRect(20, 500, 100, 40);
+  ctx.strokeRect(15, 548, 95, 34);
 
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 11px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('ENTRY GATE', 70, 524);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ENTRY GATE', 62, 565);
 
-  // Zone and Building Labels
-  drawZoneLabel('BUILDING A', 225, 36, '#06b6d4');
-  drawZoneLabel('BUILDING B', 625, 36, '#3b82f6');
-  drawZoneLabel('GUEST ZONE G', 425, 320, '#f59e0b');
-  drawZoneLabel('BUILDING C', 225, 545, '#10b981');
-  drawZoneLabel('BUILDING D', 625, 545, '#8b5cf6');
+  // Zone and Building Labels (Balanced & Non-overlapping with elevators and slots)
+  drawZoneLabel('BUILDING A', 145, 30, '#06b6d4');
+  drawZoneLabel('BUILDING B', 545, 30, '#3b82f6');
+  drawZoneLabel('GUEST ZONE G', 430, 315, '#f59e0b');
+  drawZoneLabel('BUILDING C', 145, 520, '#10b981');
+  drawZoneLabel('BUILDING D', 545, 520, '#8b5cf6');
 
   // Draw Elevators & Obstacles
   drawElevators();
@@ -753,8 +793,50 @@ function drawFullLotNotice() {
   ctx.restore();
 }
 
+// Interactive Selection State
+let hoveredSlot = null;
+let selectedSlot = null;
+let currentDrawnPath = null;
+let currentWalkingInfo = null;
+
+// DOM Inspector Elements
+let bayInspectorPopover = null;
+let popoverBayId = null;
+let popoverBayZone = null;
+let popoverBayBadge = null;
+let popoverBayPlate = null;
+let popoverToggleBtn = null;
+let popoverCloseBtn = null;
+
 /**
- * Draws all 30 parking slots supporting FREE, OCCUPIED, and RESERVED states.
+ * Finds a parking slot under the given pixel coordinate.
+ */
+function getSlotAtPixel(px, py) {
+  return activeParkingSlots.find((slot) => {
+    const minX = slot.coordinates[0][0];
+    const maxX = slot.coordinates[1][0];
+    const minY = slot.coordinates[0][1];
+    const maxY = slot.coordinates[2][1];
+    return px >= minX && px <= maxX && py >= minY && py <= maxY;
+  }) || null;
+}
+
+/**
+ * Converts mouse event coordinates to canvas resolution space (840x620).
+ */
+function getCanvasCoords(event) {
+  if (!canvas) return { x: 0, y: 0 };
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY
+  };
+}
+
+/**
+ * Draws all 30 parking slots supporting FREE, OCCUPIED, and RESERVED states with interactive highlights.
  */
 function drawSlots(slots = activeParkingSlots) {
   if (!ctx) return;
@@ -770,23 +852,30 @@ function drawSlots(slots = activeParkingSlots) {
     }
     ctx.closePath();
 
+    const isHovered = (hoveredSlot && hoveredSlot.id === slot.id);
+    const isSelected = (selectedSlot && selectedSlot.id === slot.id);
+
     if (slot.isReserved) {
       // Amber/Gold for RESERVED
       ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2.5;
-      ctx.shadowColor = 'rgba(245, 158, 11, 0.5)';
-      ctx.shadowBlur = 8;
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#fbbf24' : '#f59e0b';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2.5;
+      ctx.shadowColor = 'rgba(245, 158, 11, 0.6)';
+      ctx.shadowBlur = isHovered || isSelected ? 12 : 8;
     } else if (slot.occupied) {
       // Red for OCCUPIED
       ctx.fillStyle = 'rgba(239, 68, 68, 0.28)';
-      ctx.strokeStyle = '#ef4444';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#fca5a5' : '#ef4444';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2;
+      ctx.shadowColor = isHovered || isSelected ? 'rgba(239, 68, 68, 0.6)' : 'transparent';
+      ctx.shadowBlur = isHovered || isSelected ? 10 : 0;
     } else {
       // Green for FREE
-      ctx.fillStyle = 'rgba(34, 197, 94, 0.28)';
-      ctx.strokeStyle = '#22c55e';
-      ctx.lineWidth = 2;
+      ctx.fillStyle = isHovered ? 'rgba(34, 197, 94, 0.42)' : 'rgba(34, 197, 94, 0.28)';
+      ctx.strokeStyle = isSelected ? '#fef08a' : isHovered ? '#86efac' : '#22c55e';
+      ctx.lineWidth = isSelected ? 3.5 : isHovered ? 3 : 2;
+      ctx.shadowColor = isHovered || isSelected ? 'rgba(34, 197, 94, 0.6)' : 'transparent';
+      ctx.shadowBlur = isHovered || isSelected ? 10 : 0;
     }
 
     ctx.fill();
@@ -813,20 +902,22 @@ function drawSlots(slots = activeParkingSlots) {
       ctx.fillText('FREE', slot.center[0], slot.center[1] + 9);
     }
 
+    // Outer subtle focus outline on hover
+    if (isHovered && !isSelected) {
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(slot.coordinates[0][0] - 2, slot.coordinates[0][1] - 2, slot.width + 4, slot.height + 4);
+    }
+
     ctx.restore();
   });
 }
 
 /**
- * Draws the routing paths:
- * 1. Vehicle A* path (Yellow glowing stroke)
- * 2. Pedestrian Walking path (Dotted cyan stroke)
+ * Draws the vehicular path and pedestrian walking line on top of map.
  */
-function drawRoutingPath(pathCoords, walkingInfo = null) {
+function drawPathOnly(pathCoords, walkingInfo = null) {
   if (!ctx || !pathCoords || pathCoords.length < 2) return;
-
-  drawMapEnvironment();
-  drawSlots(activeParkingSlots);
 
   ctx.save();
 
@@ -880,8 +971,16 @@ function drawRoutingPath(pathCoords, walkingInfo = null) {
     ctx.shadowBlur = 8;
     ctx.stroke();
 
-    const midX = (sx + ex) / 2;
-    const midY = (sy + ey) / 2;
+    let midX = (sx + ex) / 2;
+    let midY = (sy + ey) / 2;
+
+    // Shift pedestrian badge if too close to any pillar
+    fixedObstacles.forEach((obs) => {
+      if (Math.hypot(midX - (obs.x + obs.width / 2), midY - (obs.y + obs.height / 2)) < 36) {
+        midX += (midX < 420 ? 38 : -38);
+      }
+    });
+
     ctx.fillStyle = '#0f172a';
     ctx.strokeStyle = '#38bdf8';
     ctx.lineWidth = 1;
@@ -900,18 +999,256 @@ function drawRoutingPath(pathCoords, walkingInfo = null) {
   ctx.restore();
 }
 
+// Active Car Animation Handle
+let carAnimationId = null;
+
 /**
- * Initializes/Redraws the map.
+ * Animates a vehicle sprite moving along the A* polyline path to the bay.
  */
-function initParkingMap() {
-  if (!ctx || !canvas) return;
-  drawMapEnvironment();
-  drawSlots(activeParkingSlots);
+function animateCarAlongRoute(pathCoords, walkingInfo, targetSlotId, onComplete = null) {
+  if (!ctx || !pathCoords || pathCoords.length < 2) {
+    drawRoutingPath(pathCoords, walkingInfo);
+    if (onComplete) onComplete();
+    return;
+  }
+
+  if (carAnimationId) {
+    cancelAnimationFrame(carAnimationId);
+    carAnimationId = null;
+  }
+
+  // Precompute segment lengths and total distance
+  const segments = [];
+  let totalDistance = 0;
+  for (let i = 0; i < pathCoords.length - 1; i++) {
+    const p1 = pathCoords[i];
+    const p2 = pathCoords[i + 1];
+    const dist = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+    segments.push({ p1, p2, dist });
+    totalDistance += dist;
+  }
+
+  currentDrawnPath = pathCoords;
+  currentWalkingInfo = walkingInfo;
+
+  const durationMs = 1750; // Smooth 1.75s travel
+  const startTime = performance.now();
+
+  function drawVehicleSprite(x, y, angle) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    // Headlight cones projecting forward
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.25)';
+    ctx.beginPath();
+    ctx.moveTo(14, -6);
+    ctx.lineTo(44, -16);
+    ctx.lineTo(44, 16);
+    ctx.lineTo(14, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // Car Body (Sports Coupe with neon glow)
+    ctx.shadowColor = 'rgba(56, 189, 248, 0.8)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = '#0284c7';
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(-13, -7, 26, 14, 3);
+    ctx.fill();
+    ctx.stroke();
+
+    // Windshield
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-4, -5, 10, 10, 2);
+    ctx.fill();
+
+    // Headlight bulbs
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(11, -6, 2, 3);
+    ctx.fillRect(11, 3, 2, 3);
+
+    // Tail lights
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(-13, -6, 2, 3);
+    ctx.fillRect(-13, 3, 2, 3);
+
+    ctx.restore();
+  }
+
+  function frame(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / durationMs, 1.0);
+
+    // Smooth cubic ease-in-out
+    const easeProgress = progress < 0.5 
+      ? 2 * progress * progress 
+      : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+    const currentDist = easeProgress * totalDistance;
+
+    let accumulated = 0;
+    let carX = pathCoords[0][0];
+    let carY = pathCoords[0][1];
+    let carAngle = 0;
+
+    for (let i = 0; i < segments.length; i++) {
+      const seg = segments[i];
+      if (accumulated + seg.dist >= currentDist || i === segments.length - 1) {
+        const segDist = currentDist - accumulated;
+        const t = seg.dist > 0 ? Math.min(Math.max(segDist / seg.dist, 0), 1) : 1;
+        carX = seg.p1[0] + (seg.p2[0] - seg.p1[0]) * t;
+        carY = seg.p1[1] + (seg.p2[1] - seg.p1[1]) * t;
+        carAngle = Math.atan2(seg.p2[1] - seg.p1[1], seg.p2[0] - seg.p1[0]);
+        break;
+      }
+      accumulated += seg.dist;
+    }
+
+    // Redraw map baseline
+    drawMapEnvironment();
+    drawSlots(activeParkingSlots);
+    drawPathOnly(pathCoords, null); // Hide walking route until vehicle parks
+
+    // Draw the moving vehicle
+    drawVehicleSprite(carX, carY, carAngle);
+
+    if (progress < 1.0) {
+      carAnimationId = requestAnimationFrame(frame);
+    } else {
+      carAnimationId = null;
+
+      // Arrival: transition target slot to OCCUPIED
+      const targetSlot = activeParkingSlots.find((s) => s.id === targetSlotId);
+      if (targetSlot) {
+        targetSlot.isReserved = false;
+        targetSlot.occupied = true;
+      }
+
+      // Redraw map with walking line to elevator
+      redrawCurrentMap();
+
+      if (onComplete) {
+        onComplete();
+      }
+    }
+  }
+
+  carAnimationId = requestAnimationFrame(frame);
 }
 
 /**
- * Loads campus map configuration schema dynamically (from parking_map.json or admin upload).
- * @param {Object} config - Blueprint JSON schema
+ * Saves and draws the active routing path statically.
+ */
+function drawRoutingPath(pathCoords, walkingInfo = null) {
+  if (carAnimationId) {
+    cancelAnimationFrame(carAnimationId);
+    carAnimationId = null;
+  }
+  currentDrawnPath = pathCoords;
+  currentWalkingInfo = walkingInfo;
+  redrawCurrentMap();
+}
+
+/**
+ * Redraws current map including active route if present.
+ */
+function redrawCurrentMap() {
+  if (!ctx || !canvas) return;
+  drawMapEnvironment();
+  drawSlots(activeParkingSlots);
+  if (currentDrawnPath && currentDrawnPath.length >= 2) {
+    drawPathOnly(currentDrawnPath, currentWalkingInfo);
+  }
+}
+
+/**
+ * Resets path and redraws baseline map.
+ */
+function initParkingMap() {
+  if (carAnimationId) {
+    cancelAnimationFrame(carAnimationId);
+    carAnimationId = null;
+  }
+  if (!ctx || !canvas) return;
+  currentDrawnPath = null;
+  currentWalkingInfo = null;
+  selectedSlot = null;
+  hideBayInspector();
+  redrawCurrentMap();
+}
+
+/**
+ * Displays floating bay inspector popover.
+ */
+function showBayInspector(slot) {
+  if (!bayInspectorPopover || !canvas) return;
+
+  popoverBayId.textContent = `Bay ${slot.id}`;
+  popoverBayZone.textContent = slot.zoneName || `Zone ${slot.zone}`;
+
+  if (slot.isReserved) {
+    popoverBayBadge.textContent = 'RESERVED';
+    popoverBayBadge.className = 'badge badge-guest';
+    popoverBayBadge.style.background = '';
+    popoverBayBadge.style.color = '';
+    popoverBayPlate.textContent = slot.reservedPlate || 'Assigned';
+    popoverToggleBtn.textContent = '🚪 Release Bay (Check-Out)';
+    popoverToggleBtn.className = 'btn btn-sm btn-danger';
+  } else if (slot.occupied) {
+    popoverBayBadge.textContent = 'OCCUPIED';
+    popoverBayBadge.className = 'badge';
+    popoverBayBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+    popoverBayBadge.style.color = '#f87171';
+    popoverBayPlate.textContent = slot.parkedPlate || slot.reservedPlate || 'Parked Vehicle';
+    popoverToggleBtn.textContent = '🚪 Release Bay (Check-Out)';
+    popoverToggleBtn.className = 'btn btn-sm btn-danger';
+  } else {
+    popoverBayBadge.textContent = 'FREE';
+    popoverBayBadge.className = 'badge';
+    popoverBayBadge.style.background = 'rgba(34, 197, 94, 0.2)';
+    popoverBayBadge.style.color = '#86efac';
+    popoverBayPlate.textContent = 'None';
+    popoverToggleBtn.textContent = '🚗 Park Vehicle Here';
+    popoverToggleBtn.className = 'btn btn-sm btn-success';
+  }
+
+  // Position relative to canvasWrapper
+  const wrapper = document.getElementById('canvasWrapper');
+  const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : canvas.getBoundingClientRect();
+  const canvasRect = canvas.getBoundingClientRect();
+
+  const slotScreenX = (slot.center[0] / canvas.width) * canvasRect.width + (canvasRect.left - wrapperRect.left);
+  const slotScreenY = (slot.center[1] / canvas.height) * canvasRect.height + (canvasRect.top - wrapperRect.top);
+
+  let popoverX = slotScreenX + 25;
+  let popoverY = slotScreenY - 60;
+
+  if (popoverX + 260 > wrapperRect.width) {
+    popoverX = slotScreenX - 275;
+  }
+  if (popoverY < 10) popoverY = 10;
+
+  bayInspectorPopover.style.left = `${Math.max(10, Math.round(popoverX))}px`;
+  bayInspectorPopover.style.top = `${Math.max(10, Math.round(popoverY))}px`;
+  bayInspectorPopover.classList.remove('hidden');
+}
+
+/**
+ * Hides floating bay inspector.
+ */
+function hideBayInspector() {
+  if (bayInspectorPopover) {
+    bayInspectorPopover.classList.add('hidden');
+  }
+}
+
+/**
+ * Loads campus map configuration schema dynamically.
  */
 function loadParkingMapConfig(config) {
   if (!config) return false;
@@ -951,22 +1288,103 @@ window.parkingCanvas = {
   updateSlotOccupancy,
   reserveSlot,
   releaseSlot,
+  occupySlot,
+  freeAllBays,
+  getSlotAtPixel,
   isParkingLotFull,
   getParkingStats,
   assignOptimalParkingSlot,
   findAStarPath,
   drawSlots,
   drawRoutingPath,
+  animateCarAlongRoute,
   drawMapEnvironment,
-  initParkingMap
+  redrawCurrentMap,
+  initParkingMap,
+  showBayInspector,
+  hideBayInspector
 };
 
 window.assignOptimalParkingSlot = assignOptimalParkingSlot;
 window.reserveSlot = reserveSlot;
+window.releaseSlot = releaseSlot;
+window.occupySlot = occupySlot;
+window.freeAllBays = freeAllBays;
 window.findAStarPath = findAStarPath;
 window.drawRoutingPath = drawRoutingPath;
+window.animateCarAlongRoute = animateCarAlongRoute;
 window.loadParkingMapConfig = loadParkingMapConfig;
 
+// Setup interactive canvas events
 document.addEventListener('DOMContentLoaded', () => {
+  bayInspectorPopover = document.getElementById('bayInspectorPopover');
+  popoverBayId = document.getElementById('popoverBayId');
+  popoverBayZone = document.getElementById('popoverBayZone');
+  popoverBayBadge = document.getElementById('popoverBayBadge');
+  popoverBayPlate = document.getElementById('popoverBayPlate');
+  popoverToggleBtn = document.getElementById('popoverToggleBtn');
+  popoverCloseBtn = document.getElementById('popoverCloseBtn');
+
+  if (canvas) {
+    canvas.addEventListener('mousemove', (e) => {
+      const { x, y } = getCanvasCoords(e);
+      const slot = getSlotAtPixel(x, y);
+      if (slot !== hoveredSlot) {
+        hoveredSlot = slot;
+        canvas.style.cursor = slot ? 'pointer' : 'default';
+        redrawCurrentMap();
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      if (hoveredSlot) {
+        hoveredSlot = null;
+        canvas.style.cursor = 'default';
+        redrawCurrentMap();
+      }
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const { x, y } = getCanvasCoords(e);
+      const slot = getSlotAtPixel(x, y);
+      if (slot) {
+        selectedSlot = slot;
+        redrawCurrentMap();
+        showBayInspector(slot);
+      } else {
+        selectedSlot = null;
+        redrawCurrentMap();
+        hideBayInspector();
+      }
+    });
+  }
+
+  if (popoverCloseBtn) {
+    popoverCloseBtn.addEventListener('click', () => {
+      selectedSlot = null;
+      hideBayInspector();
+      redrawCurrentMap();
+    });
+  }
+
+  if (popoverToggleBtn) {
+    popoverToggleBtn.addEventListener('click', () => {
+      if (!selectedSlot) return;
+      const targetSlot = selectedSlot;
+      if (targetSlot.occupied || targetSlot.isReserved) {
+        releaseSlot(targetSlot.id);
+        if (typeof window.onSlotReleased === 'function') {
+          window.onSlotReleased(targetSlot.id);
+        }
+      } else {
+        occupySlot(targetSlot.id, 'MANUAL-PARK');
+        if (typeof window.onSlotOccupied === 'function') {
+          window.onSlotOccupied(targetSlot.id);
+        }
+      }
+      showBayInspector(targetSlot);
+    });
+  }
+
   initParkingMap();
 });
